@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>
+  {{ "INVOICING_FOR" | translate }} {{ data.studentName }}
+</h1>
+<div mat-dialog-content>
+  <p>{{ "HOW_MANY_HOURS" | translate }}</p>
+  <mat-form-field appearance="fill">
+    <mat-label>{{ "HOURS" | translate }}</mat-label>
+    <input type="number" [min]="0" matInput [(ngModel)]="data.hours" />
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">{{ "CLOSE" | translate }}</button>
+  <button mat-button (click)="onAcceptClick()" cdkFocusInitial>
+    {{ "INVOICE" | translate }}
+  </button>
+</div>

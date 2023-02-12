@@ -1,0 +1,21 @@
+<form class="w-100 h-center-v2">
+  <div class="row">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "CHOOSE_DATE" | translate }}</mat-label>
+      <input
+        #dateInput
+        matInput
+        [value]="initialDate"
+        [matDatepicker]="datepicker"
+        (dateChange)="dateChange($event)"
+        [disabled]="true"
+      />
+      <!-- (dateInput)="log($event)"  -->
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="datepicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #datepicker [disabled]="false"></mat-datepicker>
+    </mat-form-field>
+  </div>
+</form>

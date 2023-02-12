@@ -1,0 +1,48 @@
+<mat-toolbar color="primary" class="toolbar">
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    bpFormatter
+    [bpShow]="['phone-p', 'phone-l']"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <ng-container *ngTemplateOutlet="navigationElements"></ng-container>
+  </mat-menu>
+  <div [routerLink]="'/'" class="title">
+    <span>{{ "WEB_TITLE" | translate }}</span>
+  </div>
+  <span class="spacer"></span>
+  <div class="row" bpFormatter [bpShow]="['web-l', 'tablet-l']">
+    <ng-container *ngTemplateOutlet="navigationElements"></ng-container>
+  </div>
+  <span class="spacer"></span>
+  <ng-container *ngIf="needInvoicing">
+    <button
+      mat-icon-button
+      class="advise-icon blink"
+      (click)="navigateInvoice()"
+    >
+      <mat-icon class="advise-icon-color">markunread_mailbox</mat-icon>
+    </button>
+  </ng-container>
+</mat-toolbar>
+
+<ng-template #navigationElements>
+  <button mat-button [routerLink]="'/'">
+    {{ "HOME" | translate }}
+  </button>
+  <mat-divider [vertical]="true"></mat-divider>
+  <button mat-button [routerLink]="routeStudents">
+    {{ "MANAGE_ASSISTANCE_PAGE" | translate }}
+  </button>
+  <mat-divider [vertical]="true"></mat-divider>
+  <button mat-button [routerLink]="routeInvoicing">
+    {{ "INVOICING_PAGE" | translate }}
+  </button>
+  <mat-divider [vertical]="true"></mat-divider>
+  <button mat-button [routerLink]="routeStudentsManagement">
+    {{ "STUDENT_MANAGEMENT_PAGE" | translate }}
+  </button>
+</ng-template>

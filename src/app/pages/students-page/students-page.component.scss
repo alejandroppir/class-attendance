@@ -1,0 +1,20 @@
+.filter {
+  max-height: 300px;
+}
+
+.button-row {
+  align-items: center;
+  gap: 20px;
+
+  .buttons {
+    width: auto;
+  }
+}
+
+.filter-row {
+  gap: 20px;
+}
+
+.page {
+  margin: 20px auto;
+}

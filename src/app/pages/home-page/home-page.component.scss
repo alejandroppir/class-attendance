@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  width: 80vw;
+  height: 80vh;
+  justify-content: center;
+  margin: auto;
+  align-items: center;
+  .icon {
+    transform: scale(17);
+  }
+}
+
+.logo {
+  color: #1b8b65;
+}

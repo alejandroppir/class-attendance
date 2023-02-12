@@ -1,0 +1,17 @@
+{
+  "ADD_HOURS": "engadir horas",
+  "APP_NOT_AVAILABLE_FORMAT": "aplicación non dispoñible",
+  "APP_NOT_AVAILABLE_FORMAT_MESSAGE": "A aplicación non está dispoñible neste formato. \nPara usar a aplicación, visualízaa en formato vertical móbil ou web horizontal.",
+  "CHOOSE_DATE": "Data",
+  "DNI": "ID",
+  "EXAMPLE_FILTER": "por exemplo, María",
+  "FILTER": "Filtro",
+  "HOME": "Comezo",
+  "HOURS": "Horario",
+  "NOMBRE": "Nome",
+  "NO_DATA_FILTER": "Non hai datos para o filtro:",
+  "RESET": "Para reiniciar",
+  "SAVE_HOURS": "aforrar horas",
+  "STUDENTS_PAGE": "Estudantes",
+  "WEB_TITLE": "Asistencia"
+}

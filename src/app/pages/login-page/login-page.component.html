@@ -1,0 +1,45 @@
+<section
+  class="column w-100 column-center center fit-content h-100 login-center"
+>
+  <mat-card class="login-card">
+    <mat-card-title>{{ "LOGIN" | translate }}</mat-card-title>
+    <mat-card-content>
+      <form novalidate [formGroup]="loginUser">
+        <mat-form-field class="w-100" appearance="standard">
+          <mat-label>{{ "USER" | translate }} </mat-label>
+          <input matInput formControlName="username" />
+          <mat-error *ngIf="loginUser.get('username')?.hasError('required')">
+            {{ "USER_REQUIRED" | translate }}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-100" appearance="standard">
+          <mat-label>{{ "PASS" | translate }} </mat-label>
+          <input
+            matInput
+            formControlName="pass"
+            [type]="loginUserPassHide ? 'password' : 'text'"
+          />
+          <mat-icon
+            matSuffix
+            (click)="loginUserPassHide = !loginUserPassHide"
+            >{{ loginUserPassHide ? "visibility_off" : "visibility" }}</mat-icon
+          >
+          <mat-error *ngIf="loginUser.get('pass')?.hasError('required')">
+            {{ "PASS_REQUIRED" | translate }}
+          </mat-error>
+        </mat-form-field>
+      </form>
+      <mat-divider inset></mat-divider>
+      <mat-card-actions align="end" class="row-center">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="login()"
+          class="login-button"
+        >
+          {{ "LOGIN" | translate }}
+        </button>
+      </mat-card-actions>
+    </mat-card-content>
+  </mat-card>
+</section>

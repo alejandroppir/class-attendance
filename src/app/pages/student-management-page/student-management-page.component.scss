@@ -1,0 +1,31 @@
+.fields {
+  padding-top: 20px;
+}
+.groups {
+  width: 33%;
+  padding-top: 20px;
+}
+.list {
+  height: 250px;
+  width: 100%;
+  overflow: auto;
+}
+.button-row {
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+
+  .button {
+    font-size: xx-large;
+    padding: 20px;
+  }
+}
+
+.filter-row {
+  gap: 20px;
+}
+
+.table {
+  padding: 20px;
+}

@@ -1,0 +1,17 @@
+{
+  "ADD_HOURS": "営業時間を追加",
+  "APP_NOT_AVAILABLE_FORMAT": "アプリは利用できません",
+  "APP_NOT_AVAILABLE_FORMAT_MESSAGE": "この形式のアプリケーションは利用できません。\nアプリを使用するには、縦向きのモバイルまたは横向きの Web 形式で表示します。",
+  "CHOOSE_DATE": "日にち",
+  "DNI": "ID",
+  "EXAMPLE_FILTER": "例：マリア",
+  "FILTER": "フィルター",
+  "HOME": "始まり",
+  "HOURS": "時間",
+  "NOMBRE": "名前",
+  "NO_DATA_FILTER": "フィルタするデータがありません:",
+  "RESET": "リセットするには",
+  "SAVE_HOURS": "時間を節約",
+  "STUDENTS_PAGE": "学生",
+  "WEB_TITLE": "出席"
+}
