@@ -1,27 +1,22 @@
-import { map, Observable, startWith, take, tap } from 'rxjs';
+import { SelectionModel } from '@angular/cdk/collections';
 import {
-  Component,
-  OnInit,
-  ViewChild,
   AfterContentChecked,
   AfterViewInit,
   ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormGroupDirective,
-  Validators,
-} from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
-import { Student } from 'src/app/core/models/student.model';
-import { FirestoreService } from 'src/app/core/services/firestore.service';
-import { NgForm } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
+import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { TranslateService } from '@ngx-translate/core';
+import { map, Observable, startWith, tap } from 'rxjs';
+import { Student, StudentUtils } from 'src/app/core/models/student.model';
+import { FirestoreService } from 'src/app/core/services/firestore.service';
+
 import { StudentsPageUtils } from '../students-page/students-page.utils';
 
 @Component({
@@ -133,7 +128,7 @@ export class StudentManagementPageComponent
           )
         : this.firestoreService.addStudent({
             ...this.studentModel,
-            id: new Date().getTime().toString(),
+            id: StudentUtils.generateStudentId(),
           });
     operation.subscribe(() => {
       this.clearFields();

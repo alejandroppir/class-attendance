@@ -331,6 +331,9 @@ body {
   }
 }
 .flex {
+  &-wrap {
+    flex-wrap: wrap;
+  }
   &-al-it {
     &-center {
       align-items: center;
@@ -436,6 +439,15 @@ body {
   }
   &-50 {
     height: 50%;
+  }
+}
+
+.g {
+  &-8 {
+    gap: 8px;
+  }
+  &-4 {
+    gap: 4px;
   }
 }
 

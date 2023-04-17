@@ -18,3 +18,9 @@ export interface Student {
   groups?: string[];
   hoursToAdvice: number;
 }
+
+export class StudentUtils {
+  public static generateStudentId(): string {
+    return `S-${new Date().getTime().toString()}`;
+  }
+}

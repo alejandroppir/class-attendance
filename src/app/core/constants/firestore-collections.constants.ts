@@ -1,5 +1,6 @@
 export class FSConstants {
   static readonly STUDENTS = 'students';
+  static readonly GROUPS = 'groups';
   //  static readonly APP_CONFIG = 'config';
   //  static readonly USERS = 'users';
   //  static readonly USER_IMAGES = 'images';

@@ -12,4 +12,5 @@ export enum RoutingConstants {
   PATH_MANAGE_ASSISTANCE = 'assistance-management',
   PATH_STUDENT_MANAGEMENT = 'students-management',
   PATH_INVOICING = 'invoicing',
+  PATH_GROUPS = 'groups',
 }

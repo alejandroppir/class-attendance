@@ -1,8 +1,8 @@
-import { MatPaginator } from '@angular/material/paginator';
 import { formatDate } from '@angular/common';
-import { MatTableDataSource } from '@angular/material/table';
-import { Student, StudentDate } from 'src/app/core/models/student.model';
-import { StudentTableRow, TableFilter } from './students-page.component';
+import { MatPaginator } from '@angular/material/paginator';
+import { StudentDate } from 'src/app/core/models/student.model';
+
+import { TableFilter } from './students-page.component';
 
 export class StudentsPageUtils {
   static tableFilter() {}

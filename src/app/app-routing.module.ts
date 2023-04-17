@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
 import {
   canActivate as canActivateFire,
   redirectLoggedInTo,
   redirectUnauthorizedTo,
 } from '@angular/fire/auth-guard';
+import { RouterModule, Routes } from '@angular/router';
+
 import { RoutingConstants } from './core/constants/general.constants';
 
 const routes: Routes = [
@@ -47,6 +48,16 @@ const routes: Routes = [
     loadChildren: () =>
       import('./../app/pages/invoicing-page/invoicing-page.module').then(
         (m) => m.InvoicingPageModule
+      ),
+    ...canActivateFire(() =>
+      redirectUnauthorizedTo([RoutingConstants.PATH_LOGIN])
+    ),
+  },
+  {
+    path: RoutingConstants.PATH_GROUPS,
+    loadChildren: () =>
+      import('./../app/pages/group-page/group-page.module').then(
+        (m) => m.GroupPageModule
       ),
     ...canActivateFire(() =>
       redirectUnauthorizedTo([RoutingConstants.PATH_LOGIN])

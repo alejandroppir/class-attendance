@@ -1,7 +1,6 @@
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { map, tap } from 'rxjs';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { map, tap } from 'rxjs';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
 
 import { RoutingConstants } from '../../core/constants/general.constants';
@@ -16,6 +15,7 @@ export class ToolbarComponent {
   routeStudents = RoutingConstants.PATH_MANAGE_ASSISTANCE;
   routeStudentsManagement = RoutingConstants.PATH_STUDENT_MANAGEMENT;
   routeInvoicing = RoutingConstants.PATH_INVOICING;
+  groups = RoutingConstants.PATH_GROUPS;
   needInvoicing: boolean = false;
 
   constructor(

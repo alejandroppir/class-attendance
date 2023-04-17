@@ -1,27 +1,28 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { UserCredential } from 'firebase/auth';
-import { concatMap, Observable, take } from 'rxjs';
+import { Observable, take } from 'rxjs';
+
 import { FSConstants } from '../constants/firestore-collections.constants';
+import { Group } from '../models/groups.model';
 import { Student } from '../models/student.model';
+import {
+  DocData,
+  FirestoreConnectorService,
+} from './firestore-connector.service';
 
 // import { AppConfigStrg } from '../models/app-config.models';
 // import { FSConstants } from './../constants/firestore-collections.constants';
 // import { DriveUploadedFile, DriveUploadedFileStrg } from './../models/drive-image.models';
 // import { FnFImage } from './../models/fnf-images.models';
 // import { UserStrg } from './../models/user.models';
-import {
-  DocData,
-  FirestoreConnectorService,
-} from './firestore-connector.service';
-
 @Injectable({
   providedIn: 'root',
 })
 export class FirestoreService extends FirestoreConnectorService {
   studentsCollection = FSConstants.STUDENTS;
+  groupsCollection = FSConstants.GROUPS;
   //  fnfImagesCollection = FSConstants.FF_IMAGES;
   //  appConfigCollection = FSConstants.APP_CONFIG;
   //  usageStatsCollection = FSConstants.USAGE_STATS;
@@ -65,6 +66,23 @@ export class FirestoreService extends FirestoreConnectorService {
 
   updateMultipleStudents(docArray: DocData[]): Observable<void> {
     return this.updateBatch(this.studentsCollection, docArray);
+  }
+
+  //Groups
+  getGroups(): Observable<Group[]> {
+    return this.getCollectionData(this.groupsCollection) as Observable<Group[]>;
+  }
+
+  addGroup(group: Group): Observable<void> {
+    return this.setDoc(this.groupsCollection, group.id, group).pipe(take(1));
+  }
+
+  updateGroupData(groupDocName: string, dataToUpdate: {}): Observable<void> {
+    return this.updateDoc(this.groupsCollection, groupDocName, dataToUpdate);
+  }
+
+  deleteGroup(groupDocName: string): Observable<unknown> {
+    return this.deleteDoc(`${this.groupsCollection}`, groupDocName);
   }
 
   //  // Users
