@@ -14,10 +14,9 @@ import { MatTableModule } from '@angular/material/table';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ChipFilterModule } from '../../shared/components/table-filters/chip-filter/chip-filter.module';
 import { TextFilterModule } from '../../shared/components/table-filters/text-filter/text-filter.module';
 import { GroupPageComponent } from './group-page.component';
-
+import { MatSelectModule } from '@angular/material/select';
 const routes: Routes = [{ path: '', component: GroupPageComponent }];
 
 @NgModule({
@@ -37,9 +36,9 @@ const routes: Routes = [{ path: '', component: GroupPageComponent }];
     MatAutocompleteModule,
     MatListModule,
     MatIconModule,
-    ChipFilterModule,
     TextFilterModule,
     MatCardModule,
+    MatSelectModule,
   ],
 })
 export class GroupPageModule {}

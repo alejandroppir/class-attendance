@@ -41,31 +41,22 @@
   <section class="column groups">
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>{{ "GROUPS_LABELS" | translate }}</mat-label>
-      <input
-        type="text"
-        placeholder="{{ 'ADD_GROUP' | translate }}"
-        matInput
-        [formControl]="filterControl"
-        [matAutocomplete]="auto"
-      />
-      <button matSuffix mat-icon-button (click)="addGroupToList()">
-        <mat-icon>playlist_add</mat-icon>
-      </button>
-      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-        <mat-option
-          *ngFor="let option of filteredOptions | async"
-          [value]="option"
-        >
-          {{ option }}
-        </mat-option>
-      </mat-autocomplete>
+      <mat-select
+        [compareWith]="compareGroupFn"
+        [(ngModel)]="studentGroups"
+        multiple
+      >
+        <mat-option *ngFor="let group of groups" [value]="group">{{
+          group.groupName
+        }}</mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-list role="list" class="w-30 list">
-      <mat-list-item role="listitem" *ngFor="let group of studentModel.groups">
+      <mat-list-item role="listitem" *ngFor="let group of studentGroups">
         <button matSuffix mat-icon-button (click)="deleteGroupFromList(group)">
           <mat-icon>delete</mat-icon>
         </button>
-        {{ group }}
+        {{ group.groupName }}
       </mat-list-item>
     </mat-list>
   </section>
@@ -91,11 +82,6 @@
       (textFilterChange)="textFilterChange($event)"
       class="w-100"
     ></app-text-filter>
-
-    <app-chip-filter
-      (chipChange)="chipsFilterChange($event)"
-      class="w-100"
-    ></app-chip-filter>
   </section>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>

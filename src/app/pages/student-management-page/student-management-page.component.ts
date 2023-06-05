@@ -13,11 +13,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
-import { map, Observable, startWith, tap } from 'rxjs';
+import { map, Observable, startWith, tap, concatMap, forkJoin } from 'rxjs';
 import { Student, StudentUtils } from 'src/app/core/models/student.model';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
 
 import { StudentsPageUtils } from '../students-page/students-page.utils';
+import { Group } from 'c:/programmingSSD/class-attendance/src/app/core/models/groups.model';
 
 @Component({
   selector: 'app-student-management-page',
@@ -38,16 +39,14 @@ export class StudentManagementPageComponent
   paginatorSize: number[] = [5, 10, 25, 100];
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Filter
-  filterControl = new FormControl('');
-  options: string[] = [];
-  filteredOptions: Observable<string[]>;
-
   private readonly defaultHoursToAdvice = 20;
 
   //filters
   textFilter: string = '';
   groupChip: string[] = [];
+
+  groups!: Group[];
+  studentGroups!: Group[];
 
   constructor(
     private snackBar: MatSnackBar,
@@ -56,10 +55,6 @@ export class StudentManagementPageComponent
     private ref: ChangeDetectorRef
   ) {
     this.clearFields();
-    this.filteredOptions = this.filterControl.valueChanges.pipe(
-      startWith(''),
-      map((value) => this._filter(value || ''))
-    );
   }
 
   ngOnInit(): void {
@@ -69,22 +64,18 @@ export class StudentManagementPageComponent
         tap((students) => {
           this.students = students;
           this.reloadTableData();
-          this.initFilterValues(students);
         })
       )
-      .subscribe();
-  }
+      .subscribe((res) => this.parseGroups());
 
-  private initFilterValues(students: Student[]): void {
-    const groups: string[] = students
-      .filter((student) => student.groups !== undefined)
-      .map((student) => student.groups as string[])
-      .flat();
-    this.options = [...new Set(groups)];
-    this.filterControl.updateValueAndValidity({
-      onlySelf: false,
-      emitEvent: true,
-    });
+    this.firestoreService
+      .getGroups()
+      .pipe(
+        tap((groups) => {
+          this.groups = groups;
+        })
+      )
+      .subscribe((res) => this.parseGroups());
   }
 
   clearFields(): void {
@@ -97,8 +88,8 @@ export class StudentManagementPageComponent
       email: '',
       address: '',
       hoursToAdvice: this.defaultHoursToAdvice,
-      groups: [],
     };
+    this.studentGroups = [];
   }
 
   saveUser(): void {
@@ -120,6 +111,25 @@ export class StudentManagementPageComponent
       this.openSnackBar(this.translate.instant('ALIAS ALREADY_EXIST'));
       return;
     }
+
+    const newSelectedGroups = [...this.studentGroups];
+    this.parseGroups();
+    const preSelectedGroups = [...this.studentGroups];
+    const deletedGroups = preSelectedGroups.filter(
+      (group) => !newSelectedGroups.map((group) => group.id).includes(group.id)
+    );
+    const addedGroups = newSelectedGroups.filter(
+      (group) => !preSelectedGroups.map((group) => group.id).includes(group.id)
+    );
+    addedGroups.forEach((group) => group.students?.push(this.studentModel.id));
+    deletedGroups.forEach(
+      (group) =>
+        (group.students = group.students?.filter(
+          (student) => student !== this.studentModel.id
+        ))
+    );
+    const groupsToEdit = [...addedGroups, ...deletedGroups];
+
     const operation =
       this.studentModel.id !== ''
         ? this.firestoreService.updateUserData(
@@ -130,39 +140,31 @@ export class StudentManagementPageComponent
             ...this.studentModel,
             id: StudentUtils.generateStudentId(),
           });
-    operation.subscribe(() => {
-      this.clearFields();
-      this.filterControl.reset();
-      this.openSnackBar(this.translate.instant('STUDENT_INSERTED'));
-    });
+    operation
+      .pipe(
+        concatMap(() => {
+          return forkJoin([
+            groupsToEdit.map((group) =>
+              this.firestoreService.updateGroupData(group.id, {
+                students: group.students,
+              })
+            ),
+          ]);
+        })
+      )
+      .subscribe(() => {
+        this.clearFields();
+        this.openSnackBar(this.translate.instant('STUDENT_INSERTED'));
+      });
   }
 
   editUser(student: Student): void {
     this.studentModel = { ...student };
+    this.parseGroups();
   }
 
   deleteUser(student: Student): void {
     this.firestoreService.deleteUser(student.id).subscribe();
-  }
-
-  addGroupToList() {
-    if (this.filterControl.value) {
-      if (!this.studentModel.groups) {
-        this.studentModel.groups = [];
-      }
-      this.studentModel.groups.push(this.filterControl.value);
-      this.studentModel.groups = [...new Set(this.studentModel.groups)];
-      this.filterControl.reset();
-    }
-  }
-
-  deleteGroupFromList(group: string): void {
-    if (!this.studentModel.groups) {
-      this.studentModel.groups = [];
-    }
-    this.studentModel.groups = this.studentModel.groups.filter(
-      (student) => student !== group
-    );
   }
 
   openSnackBar(message: string) {
@@ -200,14 +202,6 @@ export class StudentManagementPageComponent
     return new MatTableDataSource<Student>(this.students);
   }
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.options.filter((option) =>
-      option.toLowerCase().includes(filterValue)
-    );
-  }
-
   textFilterChange(textFilter: string): void {
     this.textFilter = textFilter;
     this.applyFilter();
@@ -222,6 +216,29 @@ export class StudentManagementPageComponent
     return [this.textFilter, this.groupChip]
       .filter((filters) => filters !== undefined)
       .join(', ');
+  }
+
+  deleteGroupFromList(group: Group): void {
+    if (!this.studentGroups) {
+      this.studentGroups = [];
+    }
+    this.studentGroups = this.studentGroups.filter(
+      (studentGroup) => studentGroup !== group
+    );
+  }
+
+  compareGroupFn(group1: Group, group2: Group) {
+    return group1 && group2 ? group1.id === group2.id : group1 === group2;
+  }
+
+  private parseGroups(): void {
+    if (this.studentModel.id === '') {
+      this.studentGroups = [];
+    } else {
+      this.studentGroups = this.groups.filter((group) =>
+        group.students?.includes(this.studentModel.id)
+      );
+    }
   }
 }
 

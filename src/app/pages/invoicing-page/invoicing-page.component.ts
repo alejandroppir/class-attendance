@@ -18,6 +18,7 @@ import { Student } from 'src/app/core/models/student.model';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
 import { StudentsPageUtils } from '../students-page/students-page.utils';
 import { InputHoursDialogComponent } from './input-hours-dialog/input-hours-dialog.component';
+import { Group } from '../../core/models/groups.model';
 
 export interface InvoicingStudentsTableRow extends Student {
   id: string;
@@ -57,7 +58,9 @@ export class InvoicingPageComponent
 
   //filters
   textFilter: string = '';
-  groupChip: string[] = [];
+  groups!: Group[];
+  studentGroups: Group[] = [];
+  allStudents!: Student[];
 
   constructor(
     private snackBar: MatSnackBar,
@@ -74,19 +77,22 @@ export class InvoicingPageComponent
       .getStudents()
       .pipe(
         tap((students) => {
+          this.allStudents = students;
           this.students = students;
           this.reloadTableData();
-          this.initFilterValues(students);
         })
       )
       .subscribe();
-  }
 
-  private initFilterValues(students: Student[]): void {
-    const groups: string[] = students
-      .filter((student) => student.groups !== undefined)
-      .map((student) => student.groups as string[])
-      .flat();
+    this.firestoreService
+      .getGroups()
+      .pipe(
+        tap((groups) => {
+          this.groups = groups;
+          this.reloadTableData();
+        })
+      )
+      .subscribe();
   }
 
   clearFields(): void {
@@ -104,7 +110,7 @@ export class InvoicingPageComponent
     StudentsPageUtils.applyFilterToDataSource(
       this.dataSource,
       this.textFilter,
-      this.groupChip
+      []
     );
   }
 
@@ -115,7 +121,7 @@ export class InvoicingPageComponent
     this.reloadTableData();
   }
 
-  private reloadTableData(): void {
+  public reloadTableData(): void {
     this.dataSource = this.loadTableData();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -125,7 +131,16 @@ export class InvoicingPageComponent
   }
 
   private loadTableData(): MatTableDataSource<InvoicingStudentsTableRow> {
-    const dataFormatted = this.students.map((student) => {
+    const studentGroups = this.studentGroups ? this.studentGroups : [];
+    const flatenGroupStudents = studentGroups
+      .map((group) => group.students)
+      .flat();
+    const showStudents = this.students.filter(
+      (student) =>
+        flatenGroupStudents.length === 0 ||
+        flatenGroupStudents.includes(student.id)
+    );
+    const dataFormatted = showStudents.map((student) => {
       let invoicedHours = 0;
       let totalHours = 0;
       if (student.dates) {
@@ -150,13 +165,8 @@ export class InvoicingPageComponent
     this.applyFilter();
   }
 
-  chipsFilterChange(chips: string[]): void {
-    this.groupChip = chips;
-    this.applyFilter();
-  }
-
   getFiltersNoMatch(): string {
-    return [this.textFilter, this.groupChip]
+    return [this.textFilter, []]
       .filter((filters) => filters !== undefined)
       .join(', ');
   }
@@ -212,6 +222,20 @@ export class InvoicingPageComponent
       }
     }
     this.openSnackBar(this.translate.instant('NOT_ENOUGH_HOURS'));
+  }
+
+  compareGroupFn(group1: Group, group2: Group) {
+    return group1 && group2 ? group1.id === group2.id : group1 === group2;
+  }
+
+  deleteGroupFromList(group: Group): void {
+    if (!this.studentGroups) {
+      this.studentGroups = [];
+    }
+    this.studentGroups = this.studentGroups.filter(
+      (studentGroup) => studentGroup !== group
+    );
+    this.reloadTableData();
   }
 }
 

@@ -15,7 +15,6 @@ export interface Student {
   email: string;
   address: string;
   dates?: StudentDate[];
-  groups?: string[];
   hoursToAdvice: number;
 }
 

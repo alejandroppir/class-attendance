@@ -13,8 +13,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatListModule } from '@angular/material/list';
-import { ChipFilterModule } from 'src/app/shared/components/table-filters/chip-filter/chip-filter.module';
 import { TextFilterModule } from 'src/app/shared/components/table-filters/text-filter/text-filter.module';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [StudentManagementPageComponent],
@@ -33,8 +33,8 @@ import { TextFilterModule } from 'src/app/shared/components/table-filters/text-f
     MatAutocompleteModule,
     MatListModule,
     MatIconModule,
-    ChipFilterModule,
     TextFilterModule,
+    MatSelectModule,
   ],
 })
 export class StudentManagementPageModule {}

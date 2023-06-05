@@ -22,6 +22,7 @@ import {
   GroupUtils,
 } from '../../core/models/groups.model';
 import { GroupPageUtils } from './group-page.utils';
+import { Student } from '../../core/models/student.model';
 
 export interface GroupTableFilter {
   text: string;
@@ -48,6 +49,7 @@ export class GroupPageComponent
     'friday',
     'saturday',
     'sunday',
+    'buttons',
   ];
 
   dataSource = this.loadTableData();
@@ -63,6 +65,8 @@ export class GroupPageComponent
 
   //filters
   textFilter: string = '';
+  selectedStudents: Student[] = [];
+  studentsList!: Student[];
 
   constructor(
     private snackBar: MatSnackBar,
@@ -84,23 +88,19 @@ export class GroupPageComponent
         tap((groups) => {
           this.groups = groups;
           this.reloadTableData();
-          /* this.initFilterValues(groups); */
+        })
+      )
+      .subscribe();
+
+    this.firestoreService
+      .getStudents()
+      .pipe(
+        tap((students) => {
+          this.studentsList = students;
         })
       )
       .subscribe();
   }
-
-  /*   private initFilterValues(groups: Group[]): void {
-    const groups: string[] = groups
-      .filter((group) => group.groups !== undefined)
-      .map((group) => group.groups as string[])
-      .flat();
-    this.options = [...new Set(groups)];
-    this.filterControl.updateValueAndValidity({
-      onlySelf: false,
-      emitEvent: true,
-    });
-  } */
 
   clearFields(): void {
     this.groupModel = {
@@ -115,6 +115,7 @@ export class GroupPageComponent
       sunday: { initHour: 0, endHour: 0 },
       students: [],
     };
+    this.selectedStudents = [];
   }
 
   saveGroup(): void {
@@ -131,6 +132,9 @@ export class GroupPageComponent
       this.openSnackBar(this.translate.instant('GROUP_NAME ALREADY_EXIST'));
       return;
     }
+    this.groupModel.students = this.selectedStudents.map(
+      (student) => student.id
+    );
     const operation =
       this.groupModel.id !== ''
         ? this.firestoreService.updateGroupData(
@@ -150,9 +154,12 @@ export class GroupPageComponent
 
   editGroup(group: Group): void {
     this.groupModel = { ...group };
+    this.selectedStudents = this.studentsList.filter((student) =>
+      group.students?.includes(student.id)
+    );
   }
 
-  deleteUser(group: Group): void {
+  deleteGroup(group: Group): void {
     this.firestoreService.deleteGroup(group.id).subscribe();
   }
 
@@ -228,5 +235,20 @@ export class GroupPageComponent
         day.initHour = day.endHour - 0.5;
       }
     }
+  }
+
+  compareStudentFn(student1: Student, student2: Student) {
+    return student1 && student2
+      ? student1.id === student2.id
+      : student1 === student2;
+  }
+
+  deleteStudentFromList(student: Student): void {
+    if (!this.selectedStudents) {
+      this.selectedStudents = [];
+    }
+    this.selectedStudents = this.selectedStudents.filter(
+      (studentGroup) => studentGroup !== student
+    );
   }
 }

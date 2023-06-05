@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InvoicingPageComponent } from './invoicing-page.component';
 import { RouterModule, Routes } from '@angular/router';
-import { ChipFilterModule } from 'src/app/shared/components/table-filters/chip-filter/chip-filter.module';
 import { TextFilterModule } from 'src/app/shared/components/table-filters/text-filter/text-filter.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -18,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { StudentManagementPageRoutingModule } from '../student-management-page/student-management-page-routing.module';
 import { InputHoursDialogComponent } from './input-hours-dialog/input-hours-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
 
 const routes: Routes = [{ path: '', component: InvoicingPageComponent }];
 
@@ -26,7 +26,6 @@ const routes: Routes = [{ path: '', component: InvoicingPageComponent }];
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    ChipFilterModule,
     TextFilterModule,
     FormsModule,
     ReactiveFormsModule,
@@ -40,6 +39,7 @@ const routes: Routes = [{ path: '', component: InvoicingPageComponent }];
     MatListModule,
     MatIconModule,
     MatDialogModule,
+    MatSelectModule,
   ],
 })
 export class InvoicingPageModule {}

@@ -19,7 +19,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { StudentsPageRoutingModule } from './students-page-routing.module';
 import { StudentsPageComponent } from './students-page.component';
 import { DateFilterModule } from 'src/app/shared/components/table-filters/date-filter/date-filter.module';
-import { ChipFilterModule } from 'src/app/shared/components/table-filters/chip-filter/chip-filter.module';
 import { TextFilterModule } from 'src/app/shared/components/table-filters/text-filter/text-filter.module';
 
 @NgModule({
@@ -44,7 +43,6 @@ import { TextFilterModule } from 'src/app/shared/components/table-filters/text-f
     MatSnackBarModule,
     MatChipsModule,
     DateFilterModule,
-    ChipFilterModule,
     TextFilterModule,
   ],
 })

@@ -5,10 +5,33 @@
       class="w-100"
     ></app-text-filter>
 
-    <app-chip-filter
-      (chipChange)="chipsFilterChange($event)"
-      class="w-100"
-    ></app-chip-filter>
+    <section class="column groups">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>{{ "GROUPS_LABELS" | translate }}</mat-label>
+        <mat-select
+          [compareWith]="compareGroupFn"
+          [(ngModel)]="studentGroups"
+          (selectionChange)="reloadTableData()"
+          multiple
+        >
+          <mat-option *ngFor="let group of groups" [value]="group">{{
+            group.groupName
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-list role="list" class="w-30 list">
+        <mat-list-item role="listitem" *ngFor="let group of studentGroups">
+          <button
+            matSuffix
+            mat-icon-button
+            (click)="deleteGroupFromList(group)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+          {{ group.groupName }}
+        </mat-list-item>
+      </mat-list>
+    </section>
   </section>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
