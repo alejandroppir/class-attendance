@@ -106,6 +106,7 @@ export class GroupPageComponent
     this.groupModel = {
       id: '',
       groupName: '',
+      price: 0,
       monday: { initHour: 0, endHour: 0 },
       wednesday: { initHour: 0, endHour: 0 },
       tuesday: { initHour: 0, endHour: 0 },

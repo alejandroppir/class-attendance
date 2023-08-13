@@ -5,6 +5,11 @@
         <mat-label>{{ "GROUP_NAME_LABEL" | translate }}</mat-label>
         <input matInput type="text" [(ngModel)]="groupModel.groupName" />
       </mat-form-field>
+      <mat-form-field appearance="fill" class="w-30">
+        <mat-label>{{ "GROUP_PRICE_LABEL" | translate }}</mat-label>
+        <input matInput type="number" [(ngModel)]="groupModel.price" min="0" />
+      </mat-form-field>
+
       <mat-form-field>
         <mat-label>{{ "STUDENTS" | translate }}</mat-label>
         <mat-select

@@ -1,9 +1,24 @@
 import { Timestamp } from '@angular/fire/firestore';
 
-export interface StudentDate {
-  date: Timestamp;
-  hours: number;
-  issuedHours: number;
+export enum Months {
+  January = 'JAN',
+  February = 'FEB',
+  March = 'MAR',
+  April = 'APR',
+  May = 'MAY',
+  June = 'JUN',
+  July = 'JUL',
+  August = 'AUG',
+  September = 'SEP',
+  October = 'OCT',
+  November = 'NOV',
+  December = 'DEC',
+}
+
+export interface IssuedMonth {
+  month: Months;
+  groupId: string;
+  issued: boolean;
 }
 
 export interface Student {
@@ -14,8 +29,7 @@ export interface Student {
   telephone: number;
   email: string;
   address: string;
-  dates?: StudentDate[];
-  hoursToAdvice: number;
+  issuedMonths?: IssuedMonth[];
 }
 
 export class StudentUtils {

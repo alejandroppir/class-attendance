@@ -6,6 +6,7 @@ export interface GroupDayShift {
 export interface Group {
   id: string;
   groupName: string;
+  price: number;
   monday: GroupDayShift;
   tuesday: GroupDayShift;
   wednesday: GroupDayShift;
