@@ -1,23 +1,22 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InvoicingPageComponent } from './invoicing-page.component';
-import { RouterModule, Routes } from '@angular/router';
-import { TextFilterModule } from 'src/app/shared/components/table-filters/text-filter/text-filter.module';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { StudentManagementPageRoutingModule } from '../student-management-page/student-management-page-routing.module';
+import { TextFilterModule } from 'src/app/shared/components/table-filters/text-filter/text-filter.module';
+
 import { InputHoursDialogComponent } from './input-hours-dialog/input-hours-dialog.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@angular/material/select';
+import { InvoicingPageComponent } from './invoicing-page.component';
 
 const routes: Routes = [{ path: '', component: InvoicingPageComponent }];
 

@@ -1,6 +1,4 @@
-import { formatDate } from '@angular/common';
 import { MatPaginator } from '@angular/material/paginator';
-import { StudentDate } from 'src/app/core/models/student.model';
 
 import { TableFilter } from './students-page.component';
 
@@ -26,45 +24,32 @@ export class StudentsPageUtils {
       (textFilterValid &&
         (data['dni'].includes(fText) ||
           data['alias'].includes(fText) ||
+          data['groupName'].includes(fText) ||
           data['fullname'].includes(fText)));
+
     const groupFilter: boolean =
       !groupFilterValid ||
       (groupFilterValid &&
-        data['groups'] !== undefined &&
-        data['groups'].some((group: string) => fGroup?.includes(group)));
+        data['group'] !== undefined &&
+        fGroup.includes(data['group']));
     return emptyFilter || (textFilter && groupFilter);
   }
 
   static applyFilterToDataSource(
     dataSource: any,
     textFilter: string,
-    groupChip: string[]
+    groups: string[]
   ) {
     const filterValue = textFilter;
 
     const filter: TableFilter = {
       text: filterValue.trim().toLowerCase(),
-      groups: groupChip,
+      groups: groups,
     };
     dataSource['filter'] = JSON.stringify(filter);
 
     if (dataSource['paginator']) {
       (dataSource['paginator'] as MatPaginator).firstPage();
     }
-  }
-
-  static findActualDate(
-    dates: StudentDate[] | undefined,
-    filterDate: Date,
-    locale: string
-  ): StudentDate | undefined {
-    if (dates == undefined) {
-      return;
-    }
-    return dates.find((date) => {
-      const a = formatDate(date.date.toDate(), 'yyyy-MM-dd', locale);
-      const b = formatDate(filterDate, 'yyyy-MM-dd', locale);
-      return a === b;
-    });
   }
 }

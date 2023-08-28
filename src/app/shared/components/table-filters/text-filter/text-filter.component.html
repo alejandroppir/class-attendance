@@ -1,10 +1,27 @@
-<mat-form-field class="w-100" appearance="fill">
-  <mat-label>{{ "FILTER" | translate }}</mat-label>
-  <input
-    matInput
-    (keyup)="applyFilter()"
-    [placeholder]="'EXAMPLE_FILTER' | translate"
-    #input
-    [(ngModel)]="textFilter"
-  />
-</mat-form-field>
+<div class="w-100 row g-8">
+  <mat-form-field class="w-100" appearance="fill">
+    <mat-label>{{ "FILTER" | translate }}</mat-label>
+    <input
+      matInput
+      (keyup)="applyFilterText()"
+      [placeholder]="'EXAMPLE_FILTER' | translate"
+      #input
+      [(ngModel)]="textFilter"
+    />
+  </mat-form-field>
+
+  <section class="w-20" *ngIf="!onlyTextFilter">
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>{{ "GROUPS_LABELS" | translate }}</mat-label>
+      <mat-select
+        [compareWith]="compareGroupFn"
+        [(ngModel)]="selectedGroup"
+        (selectionChange)="applyFilterGroup()"
+      >
+        <mat-option *ngFor="let group of groups" [value]="group.id">{{
+          group.groupName
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </section>
+</div>

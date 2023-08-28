@@ -1,12 +1,14 @@
 import {
   Component,
   EventEmitter,
+  Inject,
   Input,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatInput } from '@angular/material/input';
 import { Observable } from 'rxjs';
 
@@ -27,7 +29,13 @@ export class DateFilterComponent implements OnInit {
 
   filterControl = new FormControl('');
 
-  constructor() {}
+  constructor(
+    private _adapter: DateAdapter<any>,
+    @Inject(MAT_DATE_LOCALE) private _locale: string
+  ) {
+    this._locale = 'es';
+    this._adapter.setLocale(this._locale);
+  }
 
   ngOnInit(): void {
     this.reset.subscribe(() => {

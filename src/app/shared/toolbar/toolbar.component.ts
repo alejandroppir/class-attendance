@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, tap } from 'rxjs';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
 
 import { RoutingConstants } from '../../core/constants/general.constants';
@@ -22,7 +21,7 @@ export class ToolbarComponent {
     private firestoreService: FirestoreService,
     private router: Router
   ) {
-    this.firestoreService
+    /*     this.firestoreService
       .getStudents()
       .pipe(
         map((students) => {
@@ -44,7 +43,7 @@ export class ToolbarComponent {
           this.needInvoicing = res;
         })
       )
-      .subscribe();
+      .subscribe(); */
   }
 
   navigateInvoice(): void {

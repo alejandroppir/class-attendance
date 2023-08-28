@@ -7,18 +7,21 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
-import { map, Observable, startWith, tap, concatMap, forkJoin } from 'rxjs';
+import { Group } from 'c:/programmingSSD/class-attendance/src/app/core/models/groups.model';
+import { tap } from 'rxjs';
 import { Student, StudentUtils } from 'src/app/core/models/student.model';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
 
 import { StudentsPageUtils } from '../students-page/students-page.utils';
-import { Group } from 'c:/programmingSSD/class-attendance/src/app/core/models/groups.model';
+
+interface StudentManagementTableRow extends Student {
+  groupName: string;
+}
 
 @Component({
   selector: 'app-student-management-page',
@@ -32,21 +35,17 @@ export class StudentManagementPageComponent
   students: Student[] = [];
 
   //students table
-  displayedColumns: string[] = ['fullname', 'dni', 'buttons'];
+  displayedColumns: string[] = ['fullname', 'dni', 'groupName', 'buttons'];
   dataSource = this.loadTableData();
-  selection = new SelectionModel<Student>(true, []);
+  selection = new SelectionModel<StudentManagementTableRow>(true, []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   paginatorSize: number[] = [5, 10, 25, 100];
   @ViewChild(MatSort) sort!: MatSort;
 
-  private readonly defaultHoursToAdvice = 20;
-
   //filters
   textFilter: string = '';
-  groupChip: string[] = [];
-
+  groupFilter: string = '';
   groups!: Group[];
-  studentGroups!: Group[];
 
   constructor(
     private snackBar: MatSnackBar,
@@ -66,16 +65,17 @@ export class StudentManagementPageComponent
           this.reloadTableData();
         })
       )
-      .subscribe((res) => this.parseGroups());
+      .subscribe();
 
     this.firestoreService
       .getGroups()
       .pipe(
         tap((groups) => {
-          this.groups = groups;
+          this.groups = groups.filter((group) => group.enabled);
+          this.reloadTableData();
         })
       )
-      .subscribe((res) => this.parseGroups());
+      .subscribe();
   }
 
   clearFields(): void {
@@ -87,9 +87,8 @@ export class StudentManagementPageComponent
       telephone: 0,
       email: '',
       address: '',
-      hoursToAdvice: this.defaultHoursToAdvice,
+      group: '',
     };
-    this.studentGroups = [];
   }
 
   saveUser(): void {
@@ -111,25 +110,7 @@ export class StudentManagementPageComponent
       this.openSnackBar(this.translate.instant('ALIAS ALREADY_EXIST'));
       return;
     }
-
-    const newSelectedGroups = [...this.studentGroups];
-    this.parseGroups();
-    const preSelectedGroups = [...this.studentGroups];
-    const deletedGroups = preSelectedGroups.filter(
-      (group) => !newSelectedGroups.map((group) => group.id).includes(group.id)
-    );
-    const addedGroups = newSelectedGroups.filter(
-      (group) => !preSelectedGroups.map((group) => group.id).includes(group.id)
-    );
-    addedGroups.forEach((group) => group.students?.push(this.studentModel.id));
-    deletedGroups.forEach(
-      (group) =>
-        (group.students = group.students?.filter(
-          (student) => student !== this.studentModel.id
-        ))
-    );
-    const groupsToEdit = [...addedGroups, ...deletedGroups];
-
+    delete (this.studentModel as any)['groupName'];
     const operation =
       this.studentModel.id !== ''
         ? this.firestoreService.updateUserData(
@@ -140,27 +121,15 @@ export class StudentManagementPageComponent
             ...this.studentModel,
             id: StudentUtils.generateStudentId(),
           });
-    operation
-      .pipe(
-        concatMap(() => {
-          return forkJoin([
-            groupsToEdit.map((group) =>
-              this.firestoreService.updateGroupData(group.id, {
-                students: group.students,
-              })
-            ),
-          ]);
-        })
-      )
-      .subscribe(() => {
-        this.clearFields();
-        this.openSnackBar(this.translate.instant('STUDENT_INSERTED'));
-      });
+    operation.subscribe(() => {
+      this.clearFields();
+      this.openSnackBar(this.translate.instant('STUDENT_INSERTED'));
+    });
   }
 
   editUser(student: Student): void {
     this.studentModel = { ...student };
-    this.parseGroups();
+    this.reloadTableData();
   }
 
   deleteUser(student: Student): void {
@@ -178,7 +147,7 @@ export class StudentManagementPageComponent
     StudentsPageUtils.applyFilterToDataSource(
       this.dataSource,
       this.textFilter,
-      this.groupChip
+      [this.groupFilter]
     );
   }
 
@@ -198,8 +167,23 @@ export class StudentManagementPageComponent
     this.selection.clear();
   }
 
-  private loadTableData(): MatTableDataSource<Student> {
-    return new MatTableDataSource<Student>(this.students);
+  private loadTableData(): MatTableDataSource<StudentManagementTableRow> {
+    const parsedStudents: StudentManagementTableRow[] = this.students.map(
+      (student) => {
+        const studentInt: StudentManagementTableRow = {
+          ...student,
+          groupName: '',
+        };
+        if (this.groups) {
+          const group = this.groups.find((group) => group.id === student.group);
+          if (group) {
+            studentInt.groupName = group.groupName;
+          }
+        }
+        return studentInt;
+      }
+    );
+    return new MatTableDataSource<StudentManagementTableRow>(parsedStudents);
   }
 
   textFilterChange(textFilter: string): void {
@@ -207,39 +191,23 @@ export class StudentManagementPageComponent
     this.applyFilter();
   }
 
-  chipsFilterChange(chips: string[]): void {
-    this.groupChip = chips;
+  groupFilterChange(groupFilter: string): void {
+    this.groupFilter = groupFilter;
+    this.reloadTableData();
     this.applyFilter();
   }
 
   getFiltersNoMatch(): string {
-    return [this.textFilter, this.groupChip]
+    return [this.textFilter]
       .filter((filters) => filters !== undefined)
       .join(', ');
   }
 
-  deleteGroupFromList(group: Group): void {
-    if (!this.studentGroups) {
-      this.studentGroups = [];
-    }
-    this.studentGroups = this.studentGroups.filter(
-      (studentGroup) => studentGroup !== group
-    );
+  compareGroupFn(group1: string, group2: string) {
+    return group1 && group2 ? group1 === group2 : group1 === group2;
   }
 
-  compareGroupFn(group1: Group, group2: Group) {
-    return group1 && group2 ? group1.id === group2.id : group1 === group2;
-  }
-
-  private parseGroups(): void {
-    if (this.studentModel.id === '') {
-      this.studentGroups = [];
-    } else {
-      this.studentGroups = this.groups.filter((group) =>
-        group.students?.includes(this.studentModel.id)
-      );
-    }
+  log() {
+    console.log(this.studentModel);
   }
 }
-
-// TODO - Validators

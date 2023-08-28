@@ -22,10 +22,19 @@
       <button
         mat-raised-button
         color="primary"
-        (click)="addHoursToSelected()"
+        (click)="addHoursToSelected(true)"
         class="buttons"
       >
-        {{ "ADD_HOURS" | translate }}
+        {{ "ADD_HOURS_ATTENDED" | translate }}
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="addHoursToSelected(false)"
+        class="buttons"
+      >
+        {{ "ADD_HOURS_NOT_ATTENDED" | translate }}
       </button>
       <button
         mat-raised-button
@@ -50,6 +59,7 @@
     <section class="row filter-row">
       <app-text-filter
         (textFilterChange)="textFilterChange($event)"
+        (groupFilterChange)="groupFilterChange($event)"
         class="w-100"
       ></app-text-filter>
     </section>
@@ -91,18 +101,42 @@
         <td mat-cell *matCellDef="let element">{{ element.dni }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="hours">
+      <ng-container matColumnDef="group">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ "HOURS" | translate }}
+          {{ "GROUP" | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.group }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="attendedHours">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ "HOURS_ATTENDED" | translate }}
         </th>
         <td mat-cell *matCellDef="let element">
           <mat-form-field floatLabel="never">
             <input
               matInput
               type="number"
-              [placeholder]="'HOURS' | translate"
-              [value]="element.date.hours"
-              [(ngModel)]="element.date.hours"
+              [placeholder]="'HOURS_ATTENDED' | translate"
+              [value]="element.attendedHours"
+              [(ngModel)]="element.attendedHours"
+            />
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="notAttendedHours">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ "HOURS_NOT_ATTENDED" | translate }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field floatLabel="never">
+            <input
+              matInput
+              type="number"
+              [placeholder]="'HOURS_NOT_ATTENDED' | translate"
+              [value]="element.notAttendedHours"
+              [(ngModel)]="element.notAttendedHours"
             />
           </mat-form-field>
         </td>

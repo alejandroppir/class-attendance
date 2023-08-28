@@ -26,6 +26,7 @@
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
     "@types/firebase": "^3.2.1",
+    "date-fns": "^2.30.0",
     "firebase": "^9.9.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",

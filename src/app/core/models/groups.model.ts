@@ -14,7 +14,7 @@ export interface Group {
   friday: GroupDayShift;
   saturday: GroupDayShift;
   sunday: GroupDayShift;
-  students?: string[];
+  enabled: boolean;
 }
 
 export class GroupUtils {

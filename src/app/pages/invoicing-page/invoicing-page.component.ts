@@ -15,22 +15,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { Student } from 'src/app/core/models/student.model';
-import { FirestoreService } from 'src/app/core/services/firestore.service';
+
+import { FirestoreService } from '../../core/services/firestore.service';
 import { StudentsPageUtils } from '../students-page/students-page.utils';
 import { InputHoursDialogComponent } from './input-hours-dialog/input-hours-dialog.component';
-import { Group } from '../../core/models/groups.model';
 
-export interface InvoicingStudentsTableRow extends Student {
-  id: string;
-  fullname: string;
-  dni: string;
-  telephone: number;
-  email: string;
-  address: string;
-  invoicedHours: number;
-  notInvoicedHours: number;
-  totalHours: number;
-}
+export interface InvoicingStudentsTableRow extends Student {}
 
 @Component({
   selector: 'app-invoicing-page',
@@ -44,12 +34,7 @@ export class InvoicingPageComponent
   students: Student[] = [];
 
   //students table
-  displayedColumns: string[] = [
-    'fullname',
-    'dni',
-    'notInvoicedHours',
-    'hoursResume',
-  ];
+  displayedColumns: string[] = ['fullname', 'dni'];
   dataSource = this.loadTableData();
   selection = new SelectionModel<InvoicingStudentsTableRow>(true, []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -58,8 +43,7 @@ export class InvoicingPageComponent
 
   //filters
   textFilter: string = '';
-  groups!: Group[];
-  studentGroups: Group[] = [];
+  groupFilter: string = '';
   allStudents!: Student[];
 
   constructor(
@@ -83,16 +67,6 @@ export class InvoicingPageComponent
         })
       )
       .subscribe();
-
-    this.firestoreService
-      .getGroups()
-      .pipe(
-        tap((groups) => {
-          this.groups = groups;
-          this.reloadTableData();
-        })
-      )
-      .subscribe();
   }
 
   clearFields(): void {
@@ -110,7 +84,7 @@ export class InvoicingPageComponent
     StudentsPageUtils.applyFilterToDataSource(
       this.dataSource,
       this.textFilter,
-      []
+      [this.groupFilter]
     );
   }
 
@@ -131,37 +105,17 @@ export class InvoicingPageComponent
   }
 
   private loadTableData(): MatTableDataSource<InvoicingStudentsTableRow> {
-    const studentGroups = this.studentGroups ? this.studentGroups : [];
-    const flatenGroupStudents = studentGroups
-      .map((group) => group.students)
-      .flat();
-    const showStudents = this.students.filter(
-      (student) =>
-        flatenGroupStudents.length === 0 ||
-        flatenGroupStudents.includes(student.id)
-    );
-    const dataFormatted = showStudents.map((student) => {
-      let invoicedHours = 0;
-      let totalHours = 0;
-      if (student.dates) {
-        student.dates.forEach((element) => {
-          invoicedHours = invoicedHours + element.issuedHours;
-          totalHours = totalHours + element.hours;
-        });
-      }
-      return {
-        ...student,
-        notInvoicedHours: totalHours - invoicedHours,
-        invoicedHours: invoicedHours,
-        totalHours: totalHours,
-      };
-    });
-    dataFormatted.sort((a, b) => a.notInvoicedHours - b.notInvoicedHours);
-    return new MatTableDataSource<InvoicingStudentsTableRow>(dataFormatted);
+    return new MatTableDataSource<InvoicingStudentsTableRow>(this.students);
   }
 
   textFilterChange(textFilter: string): void {
     this.textFilter = textFilter;
+    this.applyFilter();
+  }
+
+  groupFilterChange(groupFilter: string): void {
+    this.groupFilter = groupFilter;
+    this.reloadTableData();
     this.applyFilter();
   }
 
@@ -173,18 +127,18 @@ export class InvoicingPageComponent
 
   openDialog(element: InvoicingStudentsTableRow): void {
     const dialogRef = this.dialog.open(InputHoursDialogComponent, {
-      data: { studentName: element.fullname, hours: element.hoursToAdvice },
+      //data: { studentName: element.fullname, hours: element.hoursToAdvice },
     });
 
     dialogRef.afterClosed().subscribe((hoursToInvoice: number) => {
       if (hoursToInvoice !== undefined) {
         this.openSnackBar(this.translate.instant('INVOICING'));
-        this.invoiceHours(element, hoursToInvoice);
+        //this.invoiceHours(element, hoursToInvoice);
       }
     });
   }
 
-  private invoiceHours(
+  /* private invoiceHours(
     student: InvoicingStudentsTableRow,
     hoursToInvoice: number
   ): void {
@@ -222,21 +176,9 @@ export class InvoicingPageComponent
       }
     }
     this.openSnackBar(this.translate.instant('NOT_ENOUGH_HOURS'));
-  }
+  } */
 
-  compareGroupFn(group1: Group, group2: Group) {
-    return group1 && group2 ? group1.id === group2.id : group1 === group2;
-  }
-
-  deleteGroupFromList(group: Group): void {
-    if (!this.studentGroups) {
-      this.studentGroups = [];
-    }
-    this.studentGroups = this.studentGroups.filter(
-      (studentGroup) => studentGroup !== group
-    );
-    this.reloadTableData();
+  compareGroupFn(group1: string, group2: string) {
+    return group1 && group2 ? group1 === group2 : group1 === group2;
   }
 }
-
-// si bajas las horas a menos de lo que tngas en invoice. quitas las horas que se pasen y las redistribuyes

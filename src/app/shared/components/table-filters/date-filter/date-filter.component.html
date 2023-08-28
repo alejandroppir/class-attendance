@@ -5,7 +5,8 @@
       <input
         #dateInput
         matInput
-        [value]="initialDate"
+        [ngModel]="initialDate"
+        name="initialDate"
         [matDatepicker]="datepicker"
         (dateChange)="dateChange($event)"
         [disabled]="true"

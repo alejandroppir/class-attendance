@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import {
   canActivate as canActivateFire,
-  redirectLoggedInTo,
   redirectUnauthorizedTo,
 } from '@angular/fire/auth-guard';
 import { RouterModule, Routes } from '@angular/router';
@@ -29,9 +28,6 @@ const routes: Routes = [
       import('./../app/pages/login-page/login-page.module').then(
         (m) => m.LoginPageModule
       ),
-    ...canActivateFire(() =>
-      redirectLoggedInTo([`/${RoutingConstants.PATH_EMPTY}`])
-    ),
   },
   {
     path: RoutingConstants.PATH_MANAGE_ASSISTANCE,

@@ -1,13 +1,7 @@
-import { SelectionModel } from '@angular/cdk/collections';
-import { formatDate } from '@angular/common';
-import { Inject, Injectable, LOCALE_ID } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Timestamp } from 'firebase/firestore';
+import { Injectable } from '@angular/core';
 import { Student } from 'src/app/core/models/student.model';
 import { DocData } from 'src/app/core/services/firestore-connector.service';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
-import { StudentTableRow } from './students-page.component';
-import { StudentsPageUtils } from './students-page.utils';
 
 @Injectable({
   providedIn: 'root',

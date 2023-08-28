@@ -22,7 +22,6 @@ import {
   GroupUtils,
 } from '../../core/models/groups.model';
 import { GroupPageUtils } from './group-page.utils';
-import { Student } from '../../core/models/student.model';
 
 export interface GroupTableFilter {
   text: string;
@@ -39,7 +38,6 @@ export class GroupPageComponent
   groupModel!: Group;
   groups: Group[] = [];
 
-  //students table
   displayedColumns: string[] = [
     'groupName',
     'monday',
@@ -62,11 +60,7 @@ export class GroupPageComponent
   filterControl = new FormControl('');
   options: string[] = [];
   filteredOptions: Observable<string[]>;
-
-  //filters
   textFilter: string = '';
-  selectedStudents: Student[] = [];
-  studentsList!: Student[];
 
   constructor(
     private snackBar: MatSnackBar,
@@ -91,15 +85,6 @@ export class GroupPageComponent
         })
       )
       .subscribe();
-
-    this.firestoreService
-      .getStudents()
-      .pipe(
-        tap((students) => {
-          this.studentsList = students;
-        })
-      )
-      .subscribe();
   }
 
   clearFields(): void {
@@ -114,9 +99,8 @@ export class GroupPageComponent
       friday: { initHour: 0, endHour: 0 },
       saturday: { initHour: 0, endHour: 0 },
       sunday: { initHour: 0, endHour: 0 },
-      students: [],
+      enabled: true,
     };
-    this.selectedStudents = [];
   }
 
   saveGroup(): void {
@@ -133,9 +117,7 @@ export class GroupPageComponent
       this.openSnackBar(this.translate.instant('GROUP_NAME ALREADY_EXIST'));
       return;
     }
-    this.groupModel.students = this.selectedStudents.map(
-      (student) => student.id
-    );
+
     const operation =
       this.groupModel.id !== ''
         ? this.firestoreService.updateGroupData(
@@ -155,9 +137,6 @@ export class GroupPageComponent
 
   editGroup(group: Group): void {
     this.groupModel = { ...group };
-    this.selectedStudents = this.studentsList.filter((student) =>
-      group.students?.includes(student.id)
-    );
   }
 
   deleteGroup(group: Group): void {
@@ -207,14 +186,10 @@ export class GroupPageComponent
     this.applyFilter();
   }
 
-  getFiltersNoMatch(): string {
+  public getFiltersNoMatch(): string {
     return [this.textFilter]
       .filter((filters) => filters !== undefined)
       .join(', ');
-  }
-
-  log(): void {
-    console.log(this.groupModel);
   }
 
   updateEndHour(day: GroupDayShift) {
@@ -236,20 +211,5 @@ export class GroupPageComponent
         day.initHour = day.endHour - 0.5;
       }
     }
-  }
-
-  compareStudentFn(student1: Student, student2: Student) {
-    return student1 && student2
-      ? student1.id === student2.id
-      : student1 === student2;
-  }
-
-  deleteStudentFromList(student: Student): void {
-    if (!this.selectedStudents) {
-      this.selectedStudents = [];
-    }
-    this.selectedStudents = this.selectedStudents.filter(
-      (studentGroup) => studentGroup !== student
-    );
   }
 }

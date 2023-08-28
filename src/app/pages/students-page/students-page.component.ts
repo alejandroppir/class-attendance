@@ -10,31 +10,28 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Timestamp } from '@angular/fire/firestore';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { BehaviorSubject, map, Observable, startWith, tap } from 'rxjs';
-import { DocData } from 'src/app/core/services/firestore-connector.service';
+import { format } from 'date-fns';
+import { BehaviorSubject, tap } from 'rxjs';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { Student, StudentDate } from '../../core/models/student.model';
-import { FormControl } from '@angular/forms';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ElementRef } from '@angular/core';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { StudentsPageUtils } from './students-page.utils';
+
+import { Group } from '../../core/models/groups.model';
+import {
+  IssuedDate,
+  IssuedMonth,
+  IssuedMonthState,
+  IssuedYear,
+  Student,
+} from '../../core/models/student.model';
 import { StudentsFirestoreInteractionService } from './students-firestore-interaction.service';
+import { StudentsPageUtils } from './students-page.utils';
 
 export interface StudentTableRow extends Student {
-  id: string;
-  fullname: string;
-  dni: string;
-  telephone: number;
-  email: string;
-  address: string;
-  date: StudentDate;
+  attendedHours: number;
+  notAttendedHours: number;
 }
 
 export interface TableFilter {
@@ -52,13 +49,20 @@ export class StudentsPageComponent
 {
   public filterReset$: BehaviorSubject<boolean>;
   students: Student[] = [];
-  filteredList: Student[] = [];
+  studentsBackUp: Student[] = [];
   hoursToAdd: number = 0;
   filterDate: Date = new Date();
+  groups!: Group[];
 
   //students table
-  dateFormat: string = 'yyyy-MM-dd';
-  displayedColumns: string[] = ['select', 'fullname', 'dni', 'hours'];
+  displayedColumns: string[] = [
+    'select',
+    'fullname',
+    'dni',
+    'group',
+    'attendedHours',
+    'notAttendedHours',
+  ];
   dataSource = this.loadTableData();
   selection = new SelectionModel<StudentTableRow>(true, []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -68,7 +72,7 @@ export class StudentsPageComponent
   modifiedStudents: string[] = [];
 
   textFilter: string = '';
-  groupChip: string[] = [];
+  groupFilter: string = '';
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -86,6 +90,17 @@ export class StudentsPageComponent
       .pipe(
         tap((students) => {
           this.students = students;
+          this.studentsBackUp = JSON.parse(JSON.stringify(students));
+          this.reloadTableData();
+        })
+      )
+      .subscribe();
+
+    this.firestoreService
+      .getGroups()
+      .pipe(
+        tap((groups) => {
+          this.groups = groups;
           this.reloadTableData();
         })
       )
@@ -111,23 +126,50 @@ export class StudentsPageComponent
 
   private loadTableData(): MatTableDataSource<StudentTableRow> {
     const dataFormatted = this.students.map((student) => {
-      let dateRet = {
-        date: Timestamp.fromDate(
-          new Date(this.filterDate.toISOString().split('T')[0])
-        ),
-        hours: 0,
-        issuedHours: 0,
+      const extendedStudent: StudentTableRow = {
+        ...student,
+        attendedHours: 0,
+        notAttendedHours: 0,
       };
-      if (this.filterDate) {
-        const date = StudentsPageUtils.findActualDate(
-          student.dates,
-          this.filterDate,
-          this.locale
+
+      const date: Date = new Date(
+        formatDate(this.filterDate, `yyyy-MM-dd`, this.locale)
+      );
+      date.setHours(0, 0, 0, 0);
+
+      const year = Number(format(date, 'yyyy'));
+      const month = `m${format(date, 'MM').toLowerCase()}_${format(
+        date,
+        'MMMM'
+      ).toLowerCase()}`;
+      const dateFormatted: string = format(date, 'yyyy-MM-dd');
+
+      if (student.issued) {
+        const actualYear: IssuedYear | undefined = student.issued.find(
+          (issued) => issued.i_year === year
         );
-        dateRet = date ? date : dateRet;
+        if (actualYear) {
+          const actualDate = (
+            (actualYear as any)[month] as IssuedMonth
+          ).dates.find((dateInt) => dateInt.date === dateFormatted);
+          if (actualDate) {
+            extendedStudent.attendedHours = actualDate.hourAttended;
+            extendedStudent.notAttendedHours = actualDate.hourToRecover;
+          }
+        }
       }
-      return { ...student, date: dateRet };
+      return extendedStudent;
     });
+
+    const parsedStudents: Student[] = [...dataFormatted];
+    if (parsedStudents && this.groups) {
+      parsedStudents.forEach((student) => {
+        const group = this.groups.find((group) => group.id === student.group);
+        if (group) {
+          student.group = group.groupName;
+        }
+      });
+    }
     return new MatTableDataSource<StudentTableRow>(dataFormatted);
   }
 
@@ -135,13 +177,13 @@ export class StudentsPageComponent
     if (!this.hoursToAdd) {
       this.hoursToAdd = 0;
     }
-    this.hoursToAdd = this.hoursToAdd + 1 * sign;
+    this.hoursToAdd = this.hoursToAdd + 0.5 * sign;
     if (this.hoursToAdd < 0) {
       this.hoursToAdd = 0;
     }
   }
 
-  public addHoursToSelected(): void {
+  public addHoursToSelected(assisted: boolean): void {
     if (!this.selection.selected || this.selection.selected.length == 0) {
       this.openSnackBar('No hay elementos seleccionados');
       return;
@@ -155,26 +197,69 @@ export class StudentsPageComponent
       if (student == undefined) {
         return;
       }
-      const date = StudentsPageUtils.findActualDate(
-        student.dates,
-        this.filterDate,
-        this.locale
+
+      const date: Date = new Date(
+        formatDate(this.filterDate, `yyyy-MM-dd`, this.locale)
       );
-      if (date) {
-        date.hours += this.hoursToAdd;
-      } else {
-        if (!student.dates) {
-          student.dates = [];
-        }
-        const date: Date = new Date(
-          formatDate(this.filterDate, 'yyyy-MM-dd', this.locale)
-        );
-        date.setHours(0, 0, 0, 0);
-        student.dates?.push({
-          date: Timestamp.fromDate(date),
-          hours: this.hoursToAdd,
-          issuedHours: 0,
+      date.setHours(0, 0, 0, 0);
+
+      const year = Number(format(date, 'yyyy'));
+      const month = `m${format(date, 'MM').toLowerCase()}_${format(
+        date,
+        'MMMM'
+      ).toLowerCase()}`;
+      const dateFormatted: string = format(date, 'yyyy-MM-dd');
+
+      if (!student.issued) {
+        student.issued = [];
+      }
+
+      if (!student.issued?.map((issued) => issued.i_year).includes(year)) {
+        const defaultMonth: IssuedMonth = {
+          groupId: '',
+          issuedState: IssuedMonthState.NotIssued,
+          dates: [],
+        };
+        student.issued?.push({
+          i_year: year,
+          m01_january: { ...defaultMonth },
+          m02_february: { ...defaultMonth },
+          m03_march: { ...defaultMonth },
+          m04_april: { ...defaultMonth },
+          m05_may: { ...defaultMonth },
+          m06_june: { ...defaultMonth },
+          m07_july: { ...defaultMonth },
+          m08_august: { ...defaultMonth },
+          m09_september: { ...defaultMonth },
+          m10_october: { ...defaultMonth },
+          m11_november: { ...defaultMonth },
+          m12_december: { ...defaultMonth },
         });
+      }
+      const actualYear: IssuedYear | undefined = student.issued.find(
+        (issued) => issued.i_year === year
+      );
+      if (actualYear) {
+        let actualDate: IssuedDate | undefined = (
+          (actualYear as any)[month] as IssuedMonth
+        ).dates.find((dateInt) => dateInt.date === dateFormatted);
+        if (!actualDate) {
+          actualDate = {
+            date: dateFormatted,
+            hourAttended: 0,
+            hourToRecover: 0,
+          };
+          ((actualYear as any)[month] as IssuedMonth).dates.push(actualDate);
+        }
+        actualDate.hourAttended = assisted
+          ? (actualDate.hourAttended += this.hoursToAdd)
+          : actualDate.hourAttended;
+        actualDate.hourToRecover = !assisted
+          ? (actualDate.hourToRecover += this.hoursToAdd)
+          : actualDate.hourToRecover;
+        ((actualYear as any)[month] as IssuedMonth).dates.sort((a, b) =>
+          a.date > b.date ? 1 : b.date > a.date ? -1 : 0
+        );
       }
     });
     this.reloadTableData();
@@ -189,6 +274,7 @@ export class StudentsPageComponent
 
   public reset(): void {
     this.filterReset$.next(true);
+    this.students = [...{ ...this.studentsBackUp }];
     this.reloadTableData();
   }
 
@@ -213,7 +299,7 @@ export class StudentsPageComponent
     StudentsPageUtils.applyFilterToDataSource(
       this.dataSource,
       this.textFilter,
-      this.groupChip
+      [this.groupFilter]
     );
   }
 
@@ -224,18 +310,19 @@ export class StudentsPageComponent
   }
 
   getFiltersNoMatch(): string {
-    return [this.textFilter, this.groupChip]
+    return [this.textFilter]
       .filter((filters) => filters !== undefined)
       .join(', ');
   }
 
-  chipsFilterChange(chips: string[]): void {
-    this.groupChip = chips;
+  textFilterChange(textFilter: string): void {
+    this.textFilter = textFilter;
     this.applyFilter();
   }
 
-  textFilterChange(textFilter: string): void {
-    this.textFilter = textFilter;
+  groupFilterChange(groupFilter: string): void {
+    this.groupFilter = groupFilter;
+    this.reloadTableData();
     this.applyFilter();
   }
 }
