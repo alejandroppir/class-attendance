@@ -1,158 +1,136 @@
 <section class="w-80 center page">
-  <section class="row">
-    <app-date-filter
-      [reset]="filterReset$"
-      [initialDate]="filterDate"
-      (dateEmitter)="dateChange($event)"
-    ></app-date-filter>
+ <section class="row">
+  <app-date-filter [reset]="filterReset$" [initialDate]="filterDate" (dateEmitter)="dateChange($event)"></app-date-filter>
 
-    <div class="hours">
-      <button mat-icon-button (click)="modifyHours(-1)">
-        <mat-icon> do_not_disturb_on </mat-icon>
-      </button>
-      <mat-form-field class="example-form-field" appearance="fill">
-        <mat-label>{{ "HOURS" | translate }}</mat-label>
-        <input matInput type="number" [(ngModel)]="hoursToAdd" [min]="0" />
-      </mat-form-field>
-      <button mat-icon-button (click)="modifyHours(1)">
-        <mat-icon>add_circle</mat-icon>
-      </button>
-    </div>
-    <div class="row button-row">
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="addHoursToSelected(true)"
-        class="buttons"
-      >
-        {{ "ADD_HOURS_ATTENDED" | translate }}
-      </button>
+  <div class="hours">
+   <button mat-icon-button (click)="modifyHours(-1)">
+    <mat-icon> do_not_disturb_on </mat-icon>
+   </button>
+   <mat-form-field class="example-form-field" appearance="fill">
+    <mat-label>{{ 'HOURS' | translate }}</mat-label>
+    <input matInput type="number" [(ngModel)]="hoursToAdd" [min]="0" />
+   </mat-form-field>
+   <button mat-icon-button (click)="modifyHours(1)">
+    <mat-icon>add_circle</mat-icon>
+   </button>
+  </div>
+  <div class="row button-row">
+   <button mat-raised-button color="primary" (click)="addHoursToSelected(true)" class="buttons">
+    {{ 'ADD_HOURS_ATTENDED' | translate }}
+   </button>
 
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="addHoursToSelected(false)"
-        class="buttons"
-      >
-        {{ "ADD_HOURS_NOT_ATTENDED" | translate }}
-      </button>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="saveHours()"
-        class="buttons"
-      >
-        {{ "SAVE_HOURS" | translate }}
-      </button>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="reset()"
-        class="buttons"
-      >
-        {{ "RESET" | translate }}
-      </button>
-    </div>
+   <button mat-raised-button color="primary" (click)="addHoursToSelected(false)" class="buttons">
+    {{ 'ADD_HOURS_NOT_ATTENDED' | translate }}
+   </button>
+   <button mat-raised-button color="primary" (click)="saveHours()" class="buttons">
+    {{ 'SAVE_HOURS' | translate }}
+   </button>
+   <button mat-raised-button color="primary" (click)="reset()" class="buttons">
+    {{ 'RESET' | translate }}
+   </button>
+  </div>
+ </section>
+
+ <div class="column center">
+  <section class="row filter-row">
+   <app-text-filter (textFilterChange)="textFilterChange($event)" (groupFilterChange)="groupFilterChange($event)" class="w-100"></app-text-filter>
   </section>
 
-  <div class="column center">
-    <section class="row filter-row">
-      <app-text-filter
-        (textFilterChange)="textFilterChange($event)"
-        (groupFilterChange)="groupFilterChange($event)"
-        class="w-100"
-      ></app-text-filter>
-    </section>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+   <!-- Checkbox Column -->
+   <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+     <mat-checkbox
+      (change)="$event ? toggleAllRows() : null"
+      [checked]="selection.hasValue() && isAllSelected()"
+      [indeterminate]="selection.hasValue() && !isAllSelected()"
+     >
+     </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+     <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+     </mat-checkbox>
+    </td>
+   </ng-container>
 
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
-      <!-- Checkbox Column -->
-      <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox
-            (change)="$event ? toggleAllRows() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()"
-          >
-          </mat-checkbox>
-        </th>
-        <td mat-cell *matCellDef="let row">
-          <mat-checkbox
-            (click)="$event.stopPropagation()"
-            (change)="$event ? selection.toggle(row) : null"
-            [checked]="selection.isSelected(row)"
-          >
-          </mat-checkbox>
-        </td>
-      </ng-container>
+   <ng-container matColumnDef="fullname">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+     {{ 'NOMBRE' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let element">
+     {{ element.fullname }}
+    </td>
+   </ng-container>
 
-      <ng-container matColumnDef="fullname">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ "NOMBRE" | translate }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.fullname }}
-        </td>
-      </ng-container>
+   <ng-container matColumnDef="dni">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+     {{ 'DNI' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let element">{{ element.dni }}</td>
+   </ng-container>
 
-      <ng-container matColumnDef="dni">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ "DNI" | translate }}
-        </th>
-        <td mat-cell *matCellDef="let element">{{ element.dni }}</td>
-      </ng-container>
+   <ng-container matColumnDef="group">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+     {{ 'GROUP' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let element">{{ element.group }}</td>
+   </ng-container>
 
-      <ng-container matColumnDef="group">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ "GROUP" | translate }}
-        </th>
-        <td mat-cell *matCellDef="let element">{{ element.group }}</td>
-      </ng-container>
+   <ng-container matColumnDef="attendedHours">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+     {{ 'HOURS_ATTENDED' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let element">
+     <mat-form-field floatLabel="never">
+      <input
+       matInput
+       type="number"
+       min="0"
+       [placeholder]="'HOURS_ATTENDED' | translate"
+       [value]="element.attendedHours"
+       [ngModel]="element.attendedHours"
+       (change)="modifyUserHours(element, true, $event)"
+      />
+     </mat-form-field>
+    </td>
+   </ng-container>
 
-      <ng-container matColumnDef="attendedHours">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ "HOURS_ATTENDED" | translate }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <mat-form-field floatLabel="never">
-            <input
-              matInput
-              type="number"
-              [placeholder]="'HOURS_ATTENDED' | translate"
-              [value]="element.attendedHours"
-              [(ngModel)]="element.attendedHours"
-            />
-          </mat-form-field>
-        </td>
-      </ng-container>
+   <ng-container matColumnDef="notAttendedHours">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+     {{ 'HOURS_NOT_ATTENDED' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let element">
+     <mat-form-field floatLabel="never">
+      <input
+       matInput
+       type="number"
+       min="0"
+       [placeholder]="'HOURS_NOT_ATTENDED_DATE' | translate"
+       [value]="element.notAttendedHours"
+       [ngModel]="element.notAttendedHours"
+       (change)="modifyUserHours(element, false, $event)"
+      />
+     </mat-form-field>
+    </td>
+   </ng-container>
 
-      <ng-container matColumnDef="notAttendedHours">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ "HOURS_NOT_ATTENDED" | translate }}
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <mat-form-field floatLabel="never">
-            <input
-              matInput
-              type="number"
-              [placeholder]="'HOURS_NOT_ATTENDED' | translate"
-              [value]="element.notAttendedHours"
-              [(ngModel)]="element.notAttendedHours"
-            />
-          </mat-form-field>
-        </td>
-      </ng-container>
+   <ng-container matColumnDef="hasNotAttendedHours">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+     {{ 'HOURS_NOT_ATTENDED' | translate }}
+    </th>
+    <td mat-cell *matCellDef="let element">
+     <div *ngIf="element.hasNotAttendedHours > 0" [ngStyle]="{ color: 'red' }" (click)="openDialog(element)">
+      {{ element.hasNotAttendedHours + 'h' }}
+     </div>
+    </td>
+   </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">
-          {{ "NO_DATA_FILTER" | translate }} "{{ getFiltersNoMatch() }}"
-        </td>
-      </tr>
-    </table>
-    <mat-paginator
-      [pageSizeOptions]="paginatorSize"
-      aria-label="Select page of users"
-    ></mat-paginator>
-  </div>
+   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+   <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">{{ 'NO_DATA_FILTER' | translate }} "{{ getFiltersNoMatch() }}"</td>
+   </tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="paginatorSize" aria-label="Select page of users"></mat-paginator>
+ </div>
 </section>

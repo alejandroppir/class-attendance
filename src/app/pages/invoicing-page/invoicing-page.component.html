@@ -1,62 +1,139 @@
 <div class="column center w-80 page">
-  <section class="row filter-row">
-    <app-text-filter
-      (textFilterChange)="textFilterChange($event)"
-      (groupFilterChange)="groupFilterChange($event)"
-      class="w-100"
-    ></app-text-filter>
-  </section>
+ <section class="row filter-row">
+  <app-text-filter (textFilterChange)="textFilterChange($event)" (groupFilterChange)="groupFilterChange($event)" class="w-100"></app-text-filter>
+ </section>
+ <section class="row flex-al-it-center">
+  <div class="year">
+   <button mat-icon-button (click)="modifyFilterYear(-1)">
+    <mat-icon> do_not_disturb_on </mat-icon>
+   </button>
+   <mat-form-field class="example-form-field" appearance="fill">
+    <mat-label>{{ 'YEAR' | translate }}</mat-label>
+    <input matInput type="number" [(ngModel)]="yearFilter" [min]="0" />
+   </mat-form-field>
+   <button mat-icon-button (click)="modifyFilterYear(1)">
+    <mat-icon>add_circle</mat-icon>
+   </button>
+  </div>
+  <button mat-raised-button color="primary" (click)="reset()" class="buttons reset-button">
+   {{ 'RESET' | translate }}
+  </button>
+  <button mat-raised-button color="primary" (click)="save()" class="buttons reset-button">
+   {{ 'SAVE' | translate }}
+  </button>
+ </section>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
-    <ng-container matColumnDef="fullname">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ "NOMBRE" | translate }}
-      </th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.fullname }}
-      </td>
-    </ng-container>
+ <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+  <ng-container matColumnDef="alias">
+   <th mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ 'ALIAS' | translate }}
+   </th>
+   <td mat-cell *matCellDef="let element">
+    {{ element.alias }}
+   </td>
+  </ng-container>
 
-    <ng-container matColumnDef="dni">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ "DNI" | translate }}
-      </th>
-      <td mat-cell *matCellDef="let element">{{ element.dni }}</td>
-    </ng-container>
+  <ng-container matColumnDef="fullname">
+   <th mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ 'NOMBRE' | translate }}
+   </th>
+   <td mat-cell *matCellDef="let element">
+    {{ element.fullname }}
+   </td>
+  </ng-container>
 
-    <ng-container matColumnDef="notInvoicedHours">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ "PENDING_HOURS" | translate }}
-      </th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.notInvoicedHours }}
-      </td>
-    </ng-container>
+  <ng-container matColumnDef="dni">
+   <th mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ 'DNI' | translate }}
+   </th>
+   <td mat-cell *matCellDef="let element">{{ element.dni }}</td>
+  </ng-container>
 
-    <ng-container matColumnDef="hoursResume">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ "HOURS_RESUME" | translate }}
-      </th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.invoicedHours }} / {{ element.totalHours }}
-      </td>
-    </ng-container>
+  <ng-container matColumnDef="groupName">
+   <th mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ 'GROUP' | translate }}
+   </th>
+   <td mat-cell *matCellDef="let element">{{ element.groupName }}</td>
+  </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumns"
-      (click)="openDialog(row)"
-    ></tr>
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">
-        {{ "NO_DATA_FILTER" | translate }} "{{ getFiltersNoMatch() }}"
-      </td>
-    </tr>
-  </table>
+  <ng-container matColumnDef="invoiceCost">
+   <th mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ 'PRICE' | translate }}
+   </th>
+   <td mat-cell *matCellDef="let element">{{ element.invoiceCost }}€</td>
+  </ng-container>
 
-  <mat-paginator
-    [pageSizeOptions]="paginatorSize"
-    aria-label="Select page of users"
-  ></mat-paginator>
+  <ng-container matColumnDef="year">
+   <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+   <td mat-cell *matCellDef="let element">
+    <div class="row just-cont-space-around margin-top-10">
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'JAN_LABEL', element: element, monthSelector: 'm01_january' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'FEB_LABEL', element: element, monthSelector: 'm02_february' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'MAR_LABEL', element: element, monthSelector: 'm03_march' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'ABR_LABEL', element: element, monthSelector: 'm04_april' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'MAY_LABEL', element: element, monthSelector: 'm05_may' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'JUN_LABEL', element: element, monthSelector: 'm06_june' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'JUL_LABEL', element: element, monthSelector: 'm07_july' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'AGO_LABEL', element: element, monthSelector: 'm08_august' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'SEP_LABEL', element: element, monthSelector: 'm09_september' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'OCT_LABEL', element: element, monthSelector: 'm10_october' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'NOV_LABEL', element: element, monthSelector: 'm11_november' }"
+     ></ng-container>
+     <ng-container
+      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'DEC_LABEL', element: element, monthSelector: 'm12_december' }"
+     ></ng-container>
+    </div>
+   </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  <!-- (click)="openDialog(row)" -->
+  <tr class="mat-row" *matNoDataRow>
+   <td class="mat-cell" colspan="4">{{ 'NO_DATA_FILTER' | translate }} "{{ getFiltersNoMatch() }}"</td>
+  </tr>
+ </table>
+
+ <mat-paginator [pageSizeOptions]="paginatorSize" aria-label="Select page of users"></mat-paginator>
 </div>
+
+<ng-template #monthTableElement let-monthLabel let-element="element" let-monthSelector="monthSelector">
+ <div class="column column-center">
+  <div class="row">
+   <ng-container *ngTemplateOutlet="toRecover; context: { hoursToRecover: checkToRecover(element, monthSelector) }"></ng-container>
+   <ng-template #toRecover let-hours="hoursToRecover">
+    <div *ngIf="hours > 0" [ngStyle]="{ color: 'red' }" (click)="openDialog(element, monthSelector)">
+     {{ monthLabel | translate }}
+     {{ hours + 'h' }}
+    </div>
+    <div *ngIf="hours <= 0">{{ monthLabel | translate }}</div>
+   </ng-template>
+  </div>
+  <button matSuffix mat-icon-button (click)="changeElementIssuedState(element, monthSelector)">
+   <mat-icon [ngStyle]="{ color: issuedStateConfig[element.issued[yearFilter][monthSelector].issuedState].color }">{{
+    issuedStateConfig[element.issued[yearFilter][monthSelector].issuedState].icon
+   }}</mat-icon>
+  </button>
+ </div>
+</ng-template>

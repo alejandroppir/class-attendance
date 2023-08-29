@@ -14,31 +14,31 @@ import { MatTableModule } from '@angular/material/table';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TextFilterModule } from 'src/app/shared/components/table-filters/text-filter/text-filter.module';
-
-import { InputHoursDialogComponent } from './input-hours-dialog/input-hours-dialog.component';
 import { InvoicingPageComponent } from './invoicing-page.component';
+import { HoursToRecoverModule } from '../../shared/components/hours-to-recover/hours-to-recover.module';
 
 const routes: Routes = [{ path: '', component: InvoicingPageComponent }];
 
 @NgModule({
-  declarations: [InvoicingPageComponent, InputHoursDialogComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    TextFilterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TranslateModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatListModule,
-    MatIconModule,
-    MatDialogModule,
-    MatSelectModule,
-  ],
+ declarations: [InvoicingPageComponent],
+ imports: [
+  CommonModule,
+  RouterModule.forChild(routes),
+  TextFilterModule,
+  FormsModule,
+  ReactiveFormsModule,
+  MatFormFieldModule,
+  MatInputModule,
+  TranslateModule,
+  MatButtonModule,
+  MatSnackBarModule,
+  MatTableModule,
+  MatPaginatorModule,
+  MatListModule,
+  MatIconModule,
+  MatDialogModule,
+  MatSelectModule,
+  HoursToRecoverModule,
+ ],
 })
 export class InvoicingPageModule {}

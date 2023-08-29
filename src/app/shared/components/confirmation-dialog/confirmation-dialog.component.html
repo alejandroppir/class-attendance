@@ -1,0 +1,12 @@
+<h1 md-dialog-title *ngIf="data.confirmationTitle">{{ data.confirmationTitle | translate }}</h1>
+<div md-dialog-content *ngIf="data.confirmMessage">
+ {{ data.confirmMessage | translate }}
+
+ <div class="question-body">
+  <div class="column" *ngFor="let bodyData of data.bodyData" [innerHTML]="bodyData"></div>
+ </div>
+</div>
+<div md-dialog-actions class="margin-top-10 row just-cont-end">
+ <button mat-button mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+ <button mat-button [mat-dialog-close]="true" cdkFocusInitial>{{ 'CONTINUE' | translate }}</button>
+</div>

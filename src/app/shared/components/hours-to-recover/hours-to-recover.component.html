@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>{{ 'HOURS_TO_RECOVER' | translate }} {{ data.studentName }}</h1>
+<div mat-dialog-content>
+ <div *ngFor="let date of data.dates" class="row row-center just-cont-space-around">
+  <ng-container *ngIf="date.hourToRecover > 0">
+   <div>{{ date.date }}</div>
+   <div>{{ date.hourToRecover }}h</div>
+   <button mat-icon-button (click)="emitDateAndClose(date.date)" *ngIf="data.showGoTo">
+    <mat-icon>open_in_new</mat-icon>
+   </button>
+  </ng-container>
+ </div>
+</div>
+<div mat-dialog-actions>
+ <button mat-button (click)="onNoClick()" cdkFocusInitial>{{ 'CLOSE' | translate }}</button>
+</div>

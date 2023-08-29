@@ -20,30 +20,34 @@ import { StudentsPageRoutingModule } from './students-page-routing.module';
 import { StudentsPageComponent } from './students-page.component';
 import { DateFilterModule } from 'src/app/shared/components/table-filters/date-filter/date-filter.module';
 import { TextFilterModule } from 'src/app/shared/components/table-filters/text-filter/text-filter.module';
+import { HoursToRecoverModule } from '../../shared/components/hours-to-recover/hours-to-recover.module';
+import { ConfirmationDialogModule } from '../../shared/components/confirmation-dialog/confirmation-dialog.module';
 
 @NgModule({
-  declarations: [StudentsPageComponent],
-  imports: [
-    CommonModule,
-    StudentsPageRoutingModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    FormsModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatListModule,
-    TranslateModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatPaginatorModule,
-    MatSnackBarModule,
-    MatChipsModule,
-    DateFilterModule,
-    TextFilterModule,
-  ],
+ declarations: [StudentsPageComponent],
+ imports: [
+  CommonModule,
+  StudentsPageRoutingModule,
+  MatAutocompleteModule,
+  MatFormFieldModule,
+  FormsModule,
+  MatInputModule,
+  ReactiveFormsModule,
+  MatListModule,
+  TranslateModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatIconModule,
+  MatButtonModule,
+  MatTableModule,
+  MatCheckboxModule,
+  MatPaginatorModule,
+  MatSnackBarModule,
+  MatChipsModule,
+  DateFilterModule,
+  TextFilterModule,
+  HoursToRecoverModule,
+  ConfirmationDialogModule,
+ ],
 })
 export class StudentsPageModule {}
