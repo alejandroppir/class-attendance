@@ -1,6 +1,6 @@
 <section class="row center row-center">
  <section class="column fields w-90">
-  <div class="row just-cont-space-around">
+  <div class="row row-center just-cont-space-around">
    <mat-form-field appearance="fill" class="w-30">
     <mat-label>{{ 'GROUP_NAME_LABEL' | translate }}</mat-label>
     <input matInput type="text" [(ngModel)]="groupModel.groupName" />
@@ -9,14 +9,16 @@
     <mat-label>{{ 'GROUP_PRICE_LABEL' | translate }}</mat-label>
     <input matInput type="number" [(ngModel)]="groupModel.price" min="0" />
    </mat-form-field>
-   <div appearance="fill" class="w-30">
+   <div appearance="fill" class="row w-30 g-8">
     <mat-label>{{ 'GROUP_ENABLED_LABEL' | translate }}</mat-label>
     <mat-checkbox [(ngModel)]="groupModel.enabled"> </mat-checkbox>
    </div>
   </div>
   <div class="row just-cont-space-around flex-wrap days-container w-80 center">
    <!-- Lunes -->
-   <ng-container *ngTemplateOutlet="daySchedule; context: { $implicit: 'MONDAY_LABEL', groupModel: groupModel.monday }"></ng-container>
+   <ng-container
+    *ngTemplateOutlet="daySchedule; context: { $implicit: 'MONDAY_LABEL', groupModel: groupModel.monday }"
+   ></ng-container>
 
    <!-- Martes -->
    <ng-container
@@ -52,7 +54,9 @@
    ></ng-container>
 
    <!-- Viernes -->
-   <ng-container *ngTemplateOutlet="daySchedule; context: { $implicit: 'FRIDAY_LABEL', groupModel: groupModel.friday }"></ng-container>
+   <ng-container
+    *ngTemplateOutlet="daySchedule; context: { $implicit: 'FRIDAY_LABEL', groupModel: groupModel.friday }"
+   ></ng-container>
 
    <!-- Sábado -->
    <ng-container
@@ -66,7 +70,9 @@
    ></ng-container>
 
    <!-- Domingo -->
-   <ng-container *ngTemplateOutlet="daySchedule; context: { $implicit: 'SUNDAY_LABEL', groupModel: groupModel.sunday }"></ng-container>
+   <ng-container
+    *ngTemplateOutlet="daySchedule; context: { $implicit: 'SUNDAY_LABEL', groupModel: groupModel.sunday }"
+   ></ng-container>
   </div>
  </section>
 </section>
@@ -82,7 +88,11 @@
 
 <div class="column center w-80 center table">
  <section class="row filter-row">
-  <app-text-filter (textFilterChange)="textFilterChange($event)" class="w-100" [onlyTextFilter]="true"></app-text-filter>
+  <app-text-filter
+   (textFilterChange)="textFilterChange($event)"
+   class="w-100"
+   [onlyTextFilter]="true"
+  ></app-text-filter>
  </section>
 
  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>

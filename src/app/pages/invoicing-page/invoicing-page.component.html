@@ -1,8 +1,5 @@
 <div class="column center w-80 page">
- <section class="row filter-row">
-  <app-text-filter (textFilterChange)="textFilterChange($event)" (groupFilterChange)="groupFilterChange($event)" class="w-100"></app-text-filter>
- </section>
- <section class="row flex-al-it-center">
+ <section class="row flex-al-it-center g-8">
   <div class="year">
    <button mat-icon-button (click)="modifyFilterYear(-1)">
     <mat-icon> do_not_disturb_on </mat-icon>
@@ -21,6 +18,13 @@
   <button mat-raised-button color="primary" (click)="save()" class="buttons reset-button">
    {{ 'SAVE' | translate }}
   </button>
+ </section>
+ <section class="row filter-row">
+  <app-text-filter
+   (textFilterChange)="textFilterChange($event)"
+   (groupFilterChange)="groupFilterChange($event)"
+   class="w-100"
+  ></app-text-filter>
  </section>
 
  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
@@ -42,12 +46,12 @@
    </td>
   </ng-container>
 
-  <ng-container matColumnDef="dni">
+  <!--   <ng-container matColumnDef="dni">
    <th mat-header-cell *matHeaderCellDef mat-sort-header>
     {{ 'DNI' | translate }}
    </th>
    <td mat-cell *matCellDef="let element">{{ element.dni }}</td>
-  </ng-container>
+  </ng-container> -->
 
   <ng-container matColumnDef="groupName">
    <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -68,40 +72,76 @@
    <td mat-cell *matCellDef="let element">
     <div class="row just-cont-space-around margin-top-10">
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'JAN_LABEL', element: element, monthSelector: 'm01_january' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'JAN_LABEL', element: element, monthSelector: 'm01_january' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'FEB_LABEL', element: element, monthSelector: 'm02_february' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'FEB_LABEL', element: element, monthSelector: 'm02_february' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'MAR_LABEL', element: element, monthSelector: 'm03_march' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'MAR_LABEL', element: element, monthSelector: 'm03_march' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'ABR_LABEL', element: element, monthSelector: 'm04_april' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'ABR_LABEL', element: element, monthSelector: 'm04_april' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'MAY_LABEL', element: element, monthSelector: 'm05_may' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'MAY_LABEL', element: element, monthSelector: 'm05_may' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'JUN_LABEL', element: element, monthSelector: 'm06_june' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'JUN_LABEL', element: element, monthSelector: 'm06_june' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'JUL_LABEL', element: element, monthSelector: 'm07_july' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'JUL_LABEL', element: element, monthSelector: 'm07_july' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'AGO_LABEL', element: element, monthSelector: 'm08_august' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'AGO_LABEL', element: element, monthSelector: 'm08_august' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'SEP_LABEL', element: element, monthSelector: 'm09_september' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'SEP_LABEL', element: element, monthSelector: 'm09_september' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'OCT_LABEL', element: element, monthSelector: 'm10_october' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'OCT_LABEL', element: element, monthSelector: 'm10_october' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'NOV_LABEL', element: element, monthSelector: 'm11_november' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'NOV_LABEL', element: element, monthSelector: 'm11_november' }
+      "
      ></ng-container>
      <ng-container
-      *ngTemplateOutlet="monthTableElement; context: { $implicit: 'DEC_LABEL', element: element, monthSelector: 'm12_december' }"
+      *ngTemplateOutlet="
+       monthTableElement;
+       context: { $implicit: 'DEC_LABEL', element: element, monthSelector: 'm12_december' }
+      "
      ></ng-container>
     </div>
    </td>
@@ -121,7 +161,9 @@
 <ng-template #monthTableElement let-monthLabel let-element="element" let-monthSelector="monthSelector">
  <div class="column column-center">
   <div class="row">
-   <ng-container *ngTemplateOutlet="toRecover; context: { hoursToRecover: checkToRecover(element, monthSelector) }"></ng-container>
+   <ng-container
+    *ngTemplateOutlet="toRecover; context: { hoursToRecover: checkToRecover(element, monthSelector) }"
+   ></ng-container>
    <ng-template #toRecover let-hours="hoursToRecover">
     <div *ngIf="hours > 0" [ngStyle]="{ color: 'red' }" (click)="openDialog(element, monthSelector)">
      {{ monthLabel | translate }}

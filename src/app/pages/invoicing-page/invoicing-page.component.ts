@@ -13,7 +13,10 @@ import { IssuedMonth, IssuedMonthState, IssuedYear, Student, StudentUtils } from
 import { FirestoreService } from '../../core/services/firestore.service';
 import { StudentsPageUtils } from '../students-page/students-page.utils';
 import { Group } from '../../core/models/groups.model';
-import { HoursToRecoverComponent, HoursToRecoverDialogData } from '../../shared/components/hours-to-recover/hours-to-recover.component';
+import {
+ HoursToRecoverComponent,
+ HoursToRecoverDialogData,
+} from '../../shared/components/hours-to-recover/hours-to-recover.component';
 import { StudentsFirestoreInteractionService } from '../../core/services/students-firestore-interaction.service';
 import { UtilsService } from '../../shared/services/utils.service';
 
@@ -72,7 +75,7 @@ export class InvoicingPageComponent implements OnInit, AfterContentChecked, Afte
  };
 
  //students table
- displayedColumns: string[] = ['alias', 'fullname', 'dni', 'groupName', 'invoiceCost', 'year'];
+ displayedColumns: string[] = ['alias', 'fullname', 'groupName', 'invoiceCost', 'year'];
  dataSource = this.loadTableData();
  selection = new SelectionModel<InvoicingStudentsTableRow>(true, []);
  @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -190,6 +193,9 @@ export class InvoicingPageComponent implements OnInit, AfterContentChecked, Afte
    month,
    state: issuedMonth.issuedState,
   };
+  this.modifiedStudents = this.modifiedStudents.filter(
+   (student) => student.studentId !== modifiedStudent.studentId || student.month !== modifiedStudent.month,
+  );
   this.modifiedStudents.push(modifiedStudent);
  }
 
@@ -241,10 +247,14 @@ export class InvoicingPageComponent implements OnInit, AfterContentChecked, Afte
    const months = studentsFilteredById.reduce((group: { [key: string]: string[] }, item) => {
     const month = this.translate.instant(StudentUtils.parseMonthProperty(item.month));
     const state = this.translate.instant(item.state);
-    if (!group[item.studentName]) {
-     group[item.studentName] = [];
+    const groupName = this.groups.find(
+     (groupElement) => groupElement.id === this.students.find((student) => student.id === studentId)?.group,
+    )?.groupName;
+    const key = item.studentName + ' - ' + groupName;
+    if (!group[key]) {
+     group[key] = [];
     }
-    group[item.studentName].push(`${item.year} - ${month} - ${state}`);
+    group[key].push(`${item.year} - ${month} - ${state}`);
     return group;
    }, {});
 

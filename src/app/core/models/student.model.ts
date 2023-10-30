@@ -27,8 +27,6 @@ export interface IssuedYear {
 }
 
 export interface IssuedMonth {
- //month: Months;
- groupId: string;
  issuedState: IssuedMonthState;
  dates: IssuedDate[];
 }
@@ -52,8 +50,8 @@ export interface Student {
 }
 
 export class StudentUtils {
- public static generateStudentId(): string {
-  return `S-${new Date().getTime().toString()}`;
+ public static generateStudentId(offset: number = 0): string {
+  return `S-${(new Date().getTime() + offset).toString()}`;
  }
 
  public static addEmptyIssuedYear(student: Student, year: number): Student {
@@ -63,7 +61,6 @@ export class StudentUtils {
 
   if (!student.issued?.hasOwnProperty(year)) {
    const defaultMonth: IssuedMonth = {
-    groupId: '',
     issuedState: IssuedMonthState.NotIssued,
     dates: [],
    };

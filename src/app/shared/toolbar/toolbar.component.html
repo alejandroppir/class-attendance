@@ -5,7 +5,7 @@
  <mat-menu #menu="matMenu">
   <ng-container *ngTemplateOutlet="navigationElements"></ng-container>
  </mat-menu>
- <div [routerLink]="'/'" class="title">
+ <div [routerLink]="'/'">
   <span>{{ 'WEB_TITLE' | translate }}</span>
  </div>
  <span class="spacer"></span>
@@ -14,7 +14,13 @@
  </div>
  <span class="spacer"></span>
  <ng-container *ngIf="notIssued$ | async as notIssuedStudents">
-  <button matSuffix mat-icon-button (click)="showNotIssuedStudents(notIssuedStudents)" class="advise-icon blink">
+  <button
+   matSuffix
+   mat-icon-button
+   (click)="showNotIssuedStudents(notIssuedStudents)"
+   class="advise-icon advise-icon-color blink"
+   *ngIf="notIssuedStudents.length > 0"
+  >
    <mat-icon>warning</mat-icon>
   </button>
  </ng-container>

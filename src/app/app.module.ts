@@ -1,3 +1,4 @@
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
@@ -21,6 +22,8 @@ import { HoursToRecoverComponent } from './shared/components/hours-to-recover/ho
 import { ConfirmationDialogComponent } from './shared/components/confirmation-dialog/confirmation-dialog.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { PaginatorIntlService } from './shared/services/paginator-intl.service';
 
 export let AppInjector: Injector;
 const firestoreImports = [
@@ -73,6 +76,16 @@ export function translateFactory(translate: TranslateService) {
    multi: true,
   },
   HoursToRecoverComponent,
+  {
+   provide: MatPaginatorIntl,
+   useFactory: (translate: TranslateService) => {
+    const service = new PaginatorIntlService();
+    service.injectTranslateService(translate);
+    return service;
+   },
+   deps: [TranslateService],
+  },
+  { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
  ],
  bootstrap: [AppComponent],
  entryComponents: [ConfirmationDialogComponent],

@@ -1,27 +1,23 @@
 .spacer {
-  flex: 1 1 auto;
+ flex: 1 1 auto;
 }
 .toolbar {
-  height: 100%;
-}
-
-.title {
-  position: fixed;
+ height: 100%;
 }
 
 .advise-icon {
-  position: fixed;
-  right: 0;
-  &-color {
-    color: orange;
-  }
+ position: fixed;
+ right: 24px;
+ &-color {
+  color: orange;
+ }
 }
 
 @keyframes blink {
-  50% {
-    opacity: 0;
-  }
+ 50% {
+  opacity: 0;
+ }
 }
 .blink {
-  animation: blink 1s step-start 0s infinite;
+ animation: blink 1s step-start 0s infinite;
 }

@@ -1,6 +1,15 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { formatDate } from '@angular/common';
-import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
+import {
+ AfterContentChecked,
+ AfterViewInit,
+ ChangeDetectorRef,
+ Component,
+ Inject,
+ LOCALE_ID,
+ OnInit,
+ ViewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
@@ -13,7 +22,10 @@ import { Group } from '../../core/models/groups.model';
 import { IssuedDate, IssuedMonth, IssuedYear, Student, StudentUtils } from '../../core/models/student.model';
 import { StudentsFirestoreInteractionService } from '../../core/services/students-firestore-interaction.service';
 import { StudentsPageUtils } from './students-page.utils';
-import { HoursToRecoverComponent, HoursToRecoverDialogData } from '../../shared/components/hours-to-recover/hours-to-recover.component';
+import {
+ HoursToRecoverComponent,
+ HoursToRecoverDialogData,
+} from '../../shared/components/hours-to-recover/hours-to-recover.component';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -43,7 +55,7 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
  groups!: Group[];
 
  //students table
- displayedColumns: string[] = ['select', 'fullname', 'dni', 'group', 'attendedHours', 'notAttendedHours', 'hasNotAttendedHours'];
+ displayedColumns: string[] = ['select', 'alias', 'fullname', 'group', 'notAttendedHours', 'hasNotAttendedHours'];
  dataSource = this.loadTableData();
  selection = new SelectionModel<StudentTableRow>(true, []);
  @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -126,7 +138,9 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
     student = StudentUtils.addEmptyIssuedYear(student, year);
     const actualYear: IssuedYear | undefined = student.issued![year];
     if (actualYear) {
-     const actualDate = ((actualYear as any)[month] as IssuedMonth).dates.find((dateInt) => dateInt.date === dateFormatted);
+     const actualDate = ((actualYear as any)[month] as IssuedMonth).dates.find(
+      (dateInt) => dateInt.date === dateFormatted,
+     );
      if (actualDate) {
       extendedStudent.attendedHours = actualDate.hourAttended;
       extendedStudent.notAttendedHours = actualDate.hourToRecover;
@@ -184,7 +198,9 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
 
    const actualYear: IssuedYear | undefined = student.issued![year];
    if (actualYear) {
-    let actualDate: IssuedDate | undefined = ((actualYear as any)[month] as IssuedMonth).dates.find((dateInt) => dateInt.date === dateFormatted);
+    let actualDate: IssuedDate | undefined = ((actualYear as any)[month] as IssuedMonth).dates.find(
+     (dateInt) => dateInt.date === dateFormatted,
+    );
     if (!actualDate) {
      actualDate = {
       date: dateFormatted,
@@ -316,5 +332,10 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
     this.reloadTableData();
    }
   });
+ }
+
+ goToday(): void {
+  this.dateChange(new Date());
+  this.openSnackBar('Hora cambiada');
  }
 }
