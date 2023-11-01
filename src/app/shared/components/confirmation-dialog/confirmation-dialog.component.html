@@ -7,6 +7,11 @@
  </div>
 </div>
 <div md-dialog-actions class="margin-top-10 row just-cont-end">
- <button mat-button mat-dialog-close>{{ 'CANCEL' | translate }}</button>
- <button mat-button [mat-dialog-close]="true" cdkFocusInitial>{{ 'CONTINUE' | translate }}</button>
+ <ng-container *ngIf="data.standarButtons">
+  <button mat-button mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>{{ 'CONTINUE' | translate }}</button>
+ </ng-container>
+ <ng-container *ngIf="!data.standarButtons">
+  <button mat-button mat-dialog-close>{{ 'CLOSE' | translate }}</button>
+ </ng-container>
 </div>

@@ -14,6 +14,7 @@ import { Group } from '../../core/models/groups.model';
 
 interface StudentManagementTableRow extends Student {
  groupName: string;
+ state: boolean;
 }
 
 @Component({
@@ -27,7 +28,7 @@ export class StudentManagementPageComponent implements OnInit, AfterContentCheck
  students: Student[] = [];
 
  //students table
- displayedColumns: string[] = ['fullname', 'dni', 'groupName', 'buttons'];
+ displayedColumns: string[] = ['fullname', 'dni', 'groupName', 'state', 'buttons'];
  dataSource = this.loadTableData();
  selection = new SelectionModel<StudentManagementTableRow>(true, []);
  @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -63,7 +64,7 @@ export class StudentManagementPageComponent implements OnInit, AfterContentCheck
    .getGroups()
    .pipe(
     tap((groups) => {
-     this.groups = groups.filter((group) => group.enabled);
+     this.groups = groups;
      this.reloadTableData();
     }),
    )
@@ -96,7 +97,12 @@ export class StudentManagementPageComponent implements OnInit, AfterContentCheck
    this.openSnackBar(this.translate.instant('DNI_GROUP_ALREADY_EXIST'));
    return;
   }
+  if (this.studentModelGroups.length === 0) {
+   this.openSnackBar(this.translate.instant('STUDENT_WITHOUT_GROUPS'));
+   return;
+  }
   delete (this.studentModel as any)['groupName'];
+  delete (this.studentModel as any)['state'];
   const operations: Observable<unknown>[] = [];
   if (this.studentModel.id === '') {
    this.studentModelGroups.forEach((group, index) => {
@@ -191,19 +197,24 @@ export class StudentManagementPageComponent implements OnInit, AfterContentCheck
  }
 
  private loadTableData(): MatTableDataSource<StudentManagementTableRow> {
-  const parsedStudents: StudentManagementTableRow[] = this.students.map((student) => {
-   const studentInt: StudentManagementTableRow = {
-    ...student,
-    groupName: '',
-   };
-   if (this.groups) {
-    const group = this.groups.find((group) => group.id === student.group);
-    if (group) {
-     studentInt.groupName = group.groupName;
+  const parsedStudents: StudentManagementTableRow[] = this.students
+   .map((student) => {
+    const studentInt: StudentManagementTableRow = {
+     ...student,
+     groupName: '',
+     state: true,
+    };
+    if (this.groups) {
+     const group = this.groups.find((group) => group.id === student.group);
+     if (group) {
+      studentInt.groupName = group.groupName;
+      studentInt.state = group.enabled;
+      return studentInt;
+     }
     }
-   }
-   return studentInt;
-  });
+    return null;
+   })
+   .filter((student) => student !== null) as StudentManagementTableRow[];
   return new MatTableDataSource<StudentManagementTableRow>(parsedStudents);
  }
 

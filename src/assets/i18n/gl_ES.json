@@ -42,6 +42,7 @@
   "HOURS_ATTENDED": "Horario atendido",
   "HOURS_NOT_ATTENDED": "Horario desatendido",
   "HOURS_NOT_ATTENDED_DATE": "Data das horas non atendidas",
+  "HOURS_NOT_ATTENDED_TOTAL": "Total de horas sen asistencia",
   "HOURS_RESUME": "Resumo horario",
   "HOURS_TO_ADVICE": "Horario para avisar",
   "HOURS_TO_RECOVER": "horas para recuperarse",
@@ -75,6 +76,9 @@
   "NOV_LABEL": "nov.",
   "NO_DATA_FILTER": "Non hai datos para o filtro:",
   "OCT_LABEL": "outubro",
+  "PAGINATOR": {
+    "ITEMS_PER_PAGE": "Artigos por páxina"
+  },
   "PASS": "Contrasinal",
   "PASS_REQUIRED": "é necesario contrasinal",
   "PENDING_HOURS": "horas pendentes",
@@ -92,6 +96,7 @@
   "STUDENTS_PAGE": "Estudantes",
   "STUDENT_INSERTED": "alumno inserido",
   "STUDENT_MANAGEMENT_PAGE": "administrador. \nEstudantes",
+  "STUDENT_WITHOUT_GROUPS": "Estudante sen grupos",
   "SUNDAY_LABEL": "domingo",
   "TELEPHONE_LABEL": "Teléfono",
   "THURSDAY_LABEL": "xoves",
@@ -100,5 +105,8 @@
   "USER_REQUIRED": "Requírese usuario",
   "WEB_TITLE": "Asistencia",
   "WEDNESDAY_LABEL": "mércores",
-  "YEAR": "Ano"
+  "YEAR": "Ano",
+  "paginator": {
+    "of": "de"
+  }
 }

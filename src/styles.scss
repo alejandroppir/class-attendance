@@ -92,7 +92,7 @@ $light-bg-darker-5: darken($light-background, 5%);
 $light-bg-darker-10: darken($light-background, 10%);
 $light-bg-darker-20: darken($light-background, 20%);
 $light-bg-darker-30: darken($light-background, 30%);
-$light-bg-lighter-5: lighten($light-background, 5%);
+$light-bg-lighter-5: lighten($light-background, 4%);
 $dark-bg-tooltip: lighten(#2c2c2c, 20%);
 $dark-bg-alpha-4: rgba(#2c2c2c, 0.04);
 $dark-bg-alpha-12: rgba(#2c2c2c, 0.12);
@@ -240,8 +240,10 @@ $altTheme: (
  @include mat.all-component-themes($altTheme);
 }
 
+.mat-card {
+ background-color: #ededed;
+}
 // Specific component overrides, pieces that are not in line with the general theming
-
 // Handle buttons appropriately, with respect to line-height
 .mat-raised-button,
 .mat-stroked-button,
@@ -438,6 +440,9 @@ body {
    margin-bottom: 10px;
   }
  }
+ &-0 {
+  margin: 0;
+ }
 }
 
 .spacer {
@@ -470,6 +475,10 @@ mat-icon,
 
 .spacer {
  flex: 1 1 auto;
+}
+
+.override-font {
+ font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 /* * {

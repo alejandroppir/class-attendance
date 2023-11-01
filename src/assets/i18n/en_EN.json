@@ -42,6 +42,7 @@
   "HOURS_ATTENDED": "Hours attended",
   "HOURS_NOT_ATTENDED": "Unattended hours",
   "HOURS_NOT_ATTENDED_DATE": "Hours not attended date",
+  "HOURS_NOT_ATTENDED_TOTAL": "Total unassisted hours",
   "HOURS_RESUME": "Summary hours",
   "HOURS_TO_ADVICE": "Hours to notify",
   "HOURS_TO_RECOVER": "hours to recover",
@@ -75,6 +76,9 @@
   "NOV_LABEL": "Nov.",
   "NO_DATA_FILTER": "No data for filter:",
   "OCT_LABEL": "Oct.",
+  "PAGINATOR": {
+    "ITEMS_PER_PAGE": "Articles per page"
+  },
   "PASS": "Password",
   "PASS_REQUIRED": "password required",
   "PENDING_HOURS": "pending hours",
@@ -92,6 +96,7 @@
   "STUDENTS_PAGE": "Students",
   "STUDENT_INSERTED": "inserted student",
   "STUDENT_MANAGEMENT_PAGE": "Admin. Estudiantes",
+  "STUDENT_WITHOUT_GROUPS": "Student without groups",
   "SUNDAY_LABEL": "Sunday",
   "TELEPHONE_LABEL": "Telephone",
   "THURSDAY_LABEL": "Thursday",
@@ -100,5 +105,8 @@
   "USER_REQUIRED": "User required",
   "WEB_TITLE": "Attendance",
   "WEDNESDAY_LABEL": "Wednesday",
-  "YEAR": "Year"
+  "YEAR": "Year",
+  "paginator": {
+    "of": "of"
+  }
 }

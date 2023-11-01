@@ -5,12 +5,20 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 
-import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component';
+import {
+ ConfirmationDialogComponent,
+ ConfirmationDialogData,
+} from '../components/confirmation-dialog/confirmation-dialog.component';
 import { AppInjector } from './../../app.module';
 
 @Injectable({ providedIn: 'root' })
 export class UtilsService {
- constructor(private _snackBar: MatSnackBar, private _translate: TranslateService, private sanitizer: DomSanitizer, private dialog: MatDialog) {}
+ constructor(
+  private _snackBar: MatSnackBar,
+  private _translate: TranslateService,
+  private sanitizer: DomSanitizer,
+  private dialog: MatDialog,
+ ) {}
 
  static getService(service: any): any {
   return AppInjector.get<typeof service>(service as typeof service);
@@ -20,10 +28,16 @@ export class UtilsService {
   return new service(...args);
  }
 
- showConfirmationDialog(confirmationTitle: string = '', confirmMessage: string = '', bodyData: string[] = []): Observable<boolean> {
+ showConfirmationDialog(
+  confirmationTitle: string = '',
+  confirmMessage: string = '',
+  bodyData: string[] = [],
+  standarButtons: boolean = true,
+ ): Observable<boolean> {
+  const data: ConfirmationDialogData = { confirmationTitle, confirmMessage, bodyData, standarButtons };
   const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
    width: '500px',
-   data: { confirmationTitle, confirmMessage, bodyData },
+   data,
   });
 
   return dialogRef.afterClosed().pipe(map((res) => res == true));

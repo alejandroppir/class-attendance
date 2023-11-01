@@ -42,6 +42,7 @@
   "HOURS_ATTENDED": "Horas asistidas",
   "HOURS_NOT_ATTENDED": "Horas no asistidas",
   "HOURS_NOT_ATTENDED_DATE": "Horas no asistidas fecha",
+  "HOURS_NOT_ATTENDED_TOTAL": "Horas no asistidas totales",
   "HOURS_RESUME": "Resumen horas",
   "HOURS_TO_ADVICE": "Horas para avisar",
   "HOURS_TO_RECOVER": "Horas a recuperar",
@@ -75,6 +76,9 @@
   "NOV_LABEL": "Nov.",
   "NO_DATA_FILTER": "No hay datos para el filtro: ",
   "OCT_LABEL": "Oct.",
+  "PAGINATOR": {
+    "ITEMS_PER_PAGE": "Artículos por página"
+  },
   "PASS": "Contraseña",
   "PASS_REQUIRED": "Contraseña requerida",
   "PENDING_HOURS": "Horas pendientes",
@@ -92,6 +96,7 @@
   "STUDENTS_PAGE": "Estudiantes",
   "STUDENT_INSERTED": "Estudiante insertado",
   "STUDENT_MANAGEMENT_PAGE": "Admin. Estudiantes",
+  "STUDENT_WITHOUT_GROUPS": "Estudiante sin grupos",
   "SUNDAY_LABEL": "Domingo",
   "TELEPHONE_LABEL": "Teléfono",
   "THURSDAY_LABEL": "Jueves",
@@ -100,5 +105,8 @@
   "USER_REQUIRED": "Usuario requerido",
   "WEB_TITLE": "Asistencia",
   "WEDNESDAY_LABEL": "Miércoles",
-  "YEAR": "Año"
+  "YEAR": "Año",
+  "paginator": {
+    "of": "de"
+  }
 }

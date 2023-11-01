@@ -99,6 +99,17 @@
    <td mat-cell *matCellDef="let element">{{ element.groupName }}</td>
   </ng-container>
 
+  <ng-container matColumnDef="state">
+   <th mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ 'GROUP_ENABLED_LABEL' | translate }}
+   </th>
+   <td mat-cell *matCellDef="let element">
+    <mat-icon>
+     {{ element.state ? 'done' : 'close' }}
+    </mat-icon>
+   </td>
+  </ng-container>
+
   <ng-container matColumnDef="buttons">
    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
    <td mat-cell *matCellDef="let element">

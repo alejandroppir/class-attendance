@@ -15,6 +15,11 @@ export class StudentsFirestoreInteractionService {
   const studentsDataArray = modStudents
    .map((studentId) => {
     const student = students.find((student) => student.id === studentId);
+    delete (student as any)['groupName'];
+    delete (student as any)['attendedHours'];
+    delete (student as any)['notAttendedHours'];
+    delete (student as any)['hasNotAttendedHours'];
+
     return student ? ({ docName: student.id, dataToUpdate: { ...student } } as DocData) : undefined;
    })
    .filter((data) => data !== undefined);

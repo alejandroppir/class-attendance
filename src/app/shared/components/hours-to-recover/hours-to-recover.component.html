@@ -2,7 +2,7 @@
 <div mat-dialog-content>
  <div *ngFor="let date of data.dates" class="row row-center just-cont-space-around">
   <ng-container *ngIf="date.hourToRecover > 0">
-   <div>{{ date.date }}</div>
+   <div>{{ date.date | date : 'dd/MM/yyyy' }}</div>
    <div>{{ date.hourToRecover }}h</div>
    <button mat-icon-button (click)="emitDateAndClose(date.date)" *ngIf="data.showGoTo">
     <mat-icon>open_in_new</mat-icon>

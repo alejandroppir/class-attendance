@@ -42,6 +42,7 @@
   "HOURS_ATTENDED": "出席時間",
   "HOURS_NOT_ATTENDED": "無人の時間帯",
   "HOURS_NOT_ATTENDED_DATE": "不参加日の時間帯",
+  "HOURS_NOT_ATTENDED_TOTAL": "補助なしの合計時間",
   "HOURS_RESUME": "概要時間",
   "HOURS_TO_ADVICE": "通知する時間帯",
   "HOURS_TO_RECOVER": "回復するのに何時間もかかる",
@@ -75,6 +76,9 @@
   "NOV_LABEL": "11月",
   "NO_DATA_FILTER": "フィルタするデータがありません:",
   "OCT_LABEL": "10月",
+  "PAGINATOR": {
+    "ITEMS_PER_PAGE": "ページあたりの記事数"
+  },
   "PASS": "パスワード",
   "PASS_REQUIRED": "パスワードが必要",
   "PENDING_HOURS": "保留中の時間",
@@ -92,6 +96,7 @@
   "STUDENTS_PAGE": "学生",
   "STUDENT_INSERTED": "挿入された学生",
   "STUDENT_MANAGEMENT_PAGE": "管理者。\n学生",
+  "STUDENT_WITHOUT_GROUPS": "グループのない学生",
   "SUNDAY_LABEL": "日曜日",
   "TELEPHONE_LABEL": "電話",
   "THURSDAY_LABEL": "木曜日",
@@ -100,5 +105,8 @@
   "USER_REQUIRED": "ユーザー必須",
   "WEB_TITLE": "出席",
   "WEDNESDAY_LABEL": "水曜日",
-  "YEAR": "年"
+  "YEAR": "年",
+  "paginator": {
+    "of": "の"
+  }
 }

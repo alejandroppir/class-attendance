@@ -13,6 +13,14 @@
   <ng-container *ngTemplateOutlet="navigationElements"></ng-container>
  </div>
  <span class="spacer"></span>
+ <ng-container *ngIf="helpers$ | async as helpers">
+  <button matSuffix mat-icon-button (click)="showHelpDialog(helpers)">
+   <mat-icon>help</mat-icon>
+  </button>
+ </ng-container>
+ <button matSuffix mat-icon-button (click)="createHelps()">
+  <mat-icon>edit</mat-icon>
+ </button>
  <ng-container *ngIf="notIssued$ | async as notIssuedStudents">
   <button
    matSuffix

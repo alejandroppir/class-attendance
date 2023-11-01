@@ -148,22 +148,25 @@ export class InvoicingPageComponent implements OnInit, AfterContentChecked, Afte
  }
 
  private loadTableData(): MatTableDataSource<InvoicingStudentsTableRow> {
-  const parsedStudents: InvoicingStudentsTableRow[] = this.students.map((student) => {
-   StudentUtils.addEmptyIssuedYear(student, this.yearFilter);
-   const studentInt: InvoicingStudentsTableRow = {
-    ...student,
-    groupName: '',
-    invoiceCost: 0,
-   };
-   if (this.groups) {
-    const group = this.groups.find((group) => group.id === student.group);
-    if (group) {
-     studentInt.groupName = group.groupName;
-     studentInt.invoiceCost = group.price;
+  const parsedStudents: InvoicingStudentsTableRow[] = this.students
+   .map((student) => {
+    StudentUtils.addEmptyIssuedYear(student, this.yearFilter);
+    const studentInt: InvoicingStudentsTableRow = {
+     ...student,
+     groupName: '',
+     invoiceCost: 0,
+    };
+    if (this.groups) {
+     const group = this.groups.find((group) => group.id === student.group);
+     if (group) {
+      studentInt.groupName = group.groupName;
+      studentInt.invoiceCost = group.price;
+      return studentInt;
+     }
     }
-   }
-   return studentInt;
-  });
+    return null;
+   })
+   .filter((student) => student !== null) as InvoicingStudentsTableRow[];
 
   return new MatTableDataSource<InvoicingStudentsTableRow>(parsedStudents);
  }
@@ -277,6 +280,7 @@ export class InvoicingPageComponent implements OnInit, AfterContentChecked, Afte
       )
       .pipe(take(1))
       .subscribe(() => {
+       this.openSnackBar('Meses facturados');
        this.reset();
       });
     }

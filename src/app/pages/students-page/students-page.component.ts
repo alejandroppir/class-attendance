@@ -30,6 +30,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 
 export interface StudentTableRow extends Student {
+ groupName: string;
  attendedHours: number;
  notAttendedHours: number;
  hasNotAttendedHours: number;
@@ -55,7 +56,7 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
  groups!: Group[];
 
  //students table
- displayedColumns: string[] = ['select', 'alias', 'fullname', 'group', 'notAttendedHours', 'hasNotAttendedHours'];
+ displayedColumns: string[] = ['select', 'alias', 'fullname', 'groupName', 'notAttendedHours', 'hasNotAttendedHours'];
  dataSource = this.loadTableData();
  selection = new SelectionModel<StudentTableRow>(true, []);
  @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -95,7 +96,7 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
    .getGroups()
    .pipe(
     tap((groups) => {
-     this.groups = groups;
+     this.groups = groups.filter((group) => group.enabled);
      this.reloadTableData();
     }),
    )
@@ -122,6 +123,7 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
   const dataFormatted = this.students.map((student) => {
    const extendedStudent: StudentTableRow = {
     ...student,
+    groupName: '',
     attendedHours: 0,
     notAttendedHours: 0,
     hasNotAttendedHours: 0,
@@ -151,16 +153,20 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
    return extendedStudent;
   });
 
-  const parsedStudents: Student[] = [...dataFormatted];
+  let parsedStudents: StudentTableRow[] = [...dataFormatted];
   if (parsedStudents && this.groups) {
-   parsedStudents.forEach((student) => {
-    const group = this.groups.find((group) => group.id === student.group);
-    if (group) {
-     student.group = group.groupName;
-    }
-   });
+   parsedStudents = parsedStudents
+    .map((student) => {
+     const group = this.groups.find((group) => group.id === student.group);
+     if (group) {
+      student.groupName = group.groupName;
+      return student;
+     }
+     return null;
+    })
+    .filter((student) => student !== null) as StudentTableRow[];
   }
-  return new MatTableDataSource<StudentTableRow>(dataFormatted);
+  return new MatTableDataSource<StudentTableRow>(parsedStudents);
  }
 
  public modifyHours(sign: number): void {
@@ -236,7 +242,9 @@ export class StudentsPageComponent implements OnInit, AfterContentChecked, After
  }
 
  public saveHours(): void {
-  this.studentsFirestoreInteraction.saveHours(this.students, this.modifiedStudents);
+  this.studentsFirestoreInteraction
+   .saveHours(this.students, this.modifiedStudents)
+   .subscribe(() => this.openSnackBar('Horas guardadas'));
  }
 
  public reset(): void {
